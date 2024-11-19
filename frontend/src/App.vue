@@ -8,7 +8,6 @@ import Test from './components/Test.vue'
   </header>
 
   <main>
-    <p>こんてんつ</p>
     <Test />
   </main>
 </template>
