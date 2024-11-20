@@ -9,13 +9,14 @@
 - [ライセンス](#ライセンス)
 
 ## 貢献者ガイド(CONTRIBUTING.md)
-準備中
+本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/futaringoto/futarin-api/blob/main/CONTRIBUTING.md)を**必ず確認ください**
 
 ## 動作環境（確認済み）
 - Ubuntu(WSL2)
-  - Docker
+  - Docker Desktop (windows)
 - macOS(x86-64, arm64)
-  - Docker Desktop もしくは OrbStack
+  - OrbStack
+  - ~~Docker Desktop~~ 動作未確認
 
 ## 動作確認
 1. リポジトリのクローンと移動
