@@ -9,7 +9,7 @@
 - [ライセンス](#ライセンス)
 
 ## 貢献者ガイド(CONTRIBUTING.md)
-本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/futaringoto/futarin-api/blob/main/CONTRIBUTING.md)を**必ず確認ください**
+本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/shun-harutaro/nft-nenga/blob/main/CONTRIBUTING.md)を**必ず確認ください**
 
 ## 動作環境（確認済み）
 - Ubuntu(WSL2)
