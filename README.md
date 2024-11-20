@@ -84,3 +84,5 @@ sudo docker compose down
 
 ## ライセンス
 本リポジトリはMITライセンスです。
+
+川原遼介です。
