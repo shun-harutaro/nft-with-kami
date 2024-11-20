@@ -1,5 +1,5 @@
 <script setup>
-import LoginButton from './components/LoginButton.vue'
+
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import LoginButton from './components/LoginButton.vue'
   </header>
 
   <main>
-    <LoginButton />
+    <RouterView />
   </main>
 </template>
 
