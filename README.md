@@ -27,14 +27,16 @@ cd nft-nenga
 
 2. Dockerイメージのビルド
 ```
-sudo docker compose build [--no-cache]
+docker compose build
 ```
 
 3. コンテナ起動
 ```
-sudo docker compose up
-# Detachモード
-sudo docker compose up -d
+docker compose up
+```
+Detachモード
+```
+docker compose up -d
 ```
 
 4. localhost で開いてみましょう <br>
@@ -43,7 +45,7 @@ backend: http://localhost:8000
 
 6. コンテナの停止
 ```
-sudo docker compose down
+docker compose down
 ```
 
 ## APIエンドポイント
