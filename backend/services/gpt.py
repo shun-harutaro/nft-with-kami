@@ -5,24 +5,35 @@ from utils.config import (
     get_openai_assistant_id,
     get_openai_thread_id,
 )
-
-AsyncOpenAI.api_key = get_openai_api_key()
-client = AsyncOpenAI()
-
+client = None
+API_KEY = get_openai_api_key()
 ASSISTANT_ID = get_openai_assistant_id()
 THREAD_ID = get_openai_thread_id()
 
 
+def get_client() -> AsyncOpenAI:
+    global client
+    if client is None:
+        if not API_KEY:
+            raise RuntimeError("API_KEYが設定されていません")
+        AsyncOpenAI.api_key = API_KEY
+        client = AsyncOpenAI()
+    return client
+
+
 async def create_new_thread_id() -> str:
+    client = get_client()
     thread = await client.beta.threads.create()
     return thread.id
 
 
 async def delete_thread_id(thread_id: str):
+    client = get_client()
     await client.beta.threads.delete(thread_id)
 
 
 async def generate_text(prompt: str, thread_id: str = THREAD_ID) -> str:
+    client = get_client()
     await client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
