@@ -1,6 +1,7 @@
 import os
 
 from fastapi import APIRouter, HTTPException
+
 from schemas.text import TextResponse
 from services.gpt import generate_text
 

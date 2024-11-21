@@ -90,8 +90,15 @@ docker compose exec backend uv sync --update
 ## 静的解析
 自動リントと自動整形を採用しています。
 ### リント
+```
+docker compose exec backend flake8
+```
 
 ### 整形
+```
+docker compose exec backend black .
+docker compose exec backend isort .
+```
 
 ## テスト
 

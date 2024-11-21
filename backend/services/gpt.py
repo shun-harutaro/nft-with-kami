@@ -5,6 +5,7 @@ from utils.config import (
     get_openai_assistant_id,
     get_openai_thread_id,
 )
+
 client = None
 API_KEY = get_openai_api_key()
 ASSISTANT_ID = get_openai_assistant_id()
