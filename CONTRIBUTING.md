@@ -47,7 +47,7 @@ git checkout -b feat/#1_hoge
 ## 環境構築
 開発環境はすべて`docker compose`で完結するよう実装されています。
 ```
-git clone git@github.com:futaringoto/futarin-api.git
+git clone git@github.com:shun-harutaro/nft-nenga.git
 cd futarin-api
 ```
 環境変数を設定してください。詳しくは[README](https://github.com/futaringoto/futarin-api/blob/main/README.md)へ
@@ -70,21 +70,21 @@ docker compose up
 パッケージ管理に`npm`,`uv`を採用しています。
 #### パッケージの追加(フロントエンド)
 ```
-docker compose run --entrypoint "npm i `パッケージ名`" frontend
-docker compose run --entrypoint "npm i -D `パッケージ名`" frontend # 開発依存の追加
+docker compose exec frontend npm i `パッケージ名`
+docker compose exec frontend npm i -D `パッケージ名` # 開発依存の追加
 ```
 #### パッケージの追加(バックエンド)
 ```
-docker compose run --entrypoint "uv add `パッケージ名`" backend
-docker compose run --entrypoint "uv add --dev `パッケージ名`" backend # 開発依存の追加
+docker compose exec backend uv add `パッケージ名`
+docker compose exec backend uv add --dev `パッケージ名` # 開発依存の追加
 ```
 #### パッケージの更新(フロントエンド)
 ```
-docker compose run --entrypoint "npm update" frontend
+docker compose exec frontend npm update
 ```
 #### パッケージの更新(バックエンド)
 ```
-docker compose run --entrypoint "uv sync --update" backend
+docker compose exec backend uv sync --update
 ```
 
 ## 静的解析
