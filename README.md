@@ -64,14 +64,34 @@ docker compose down
 - nginx (web-server)
 ```
 .
+├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── backend
 │   ├── Dockerfile
+│   ├── cruds
+│   │   └── __init__.py
 │   ├── main.py
+│   ├── models
+│   │   └── __init__.py
 │   ├── pyproject.toml
+│   ├── routers
+│   │   ├── __init__.py
+│   │   └── gpt.py
+│   ├── schemas
+│   │   ├── __init__.py
+│   │   └── text.py
+│   ├── services
+│   │   ├── __init__.py
+│   │   └── gpt.py
+│   ├── tests
+│   │   └── __init__.py
+│   ├── uploads
+│   ├── utils
+│   │   ├── __init__.py
+│   │   └── config.py
 │   └── uv.lock
-├── docker-compose.yml
+├── compose.yml
 └── frontend
     ├── Dockerfile
     ├── README.md
@@ -88,8 +108,17 @@ docker compose down
     │   │   ├── base.css
     │   │   └── main.css
     │   ├── components
+    │   │   ├── LoginButton.vue
     │   │   └── Test.vue
-    │   └── main.js
+    │   ├── composables
+    │   │   └── useAuth.js
+    │   ├── main.js
+    │   ├── router.js
+    │   ├── utils
+    │   │   └── oauth2.js
+    │   └── views
+    │       ├── Callback.vue
+    │       └── Login.vue
     └── vite.config.js
 ```
 
