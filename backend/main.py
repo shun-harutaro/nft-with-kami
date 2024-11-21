@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from utils.config import check_env_variables
+from routers import gpt
 
 
 @asynccontextmanager
@@ -11,7 +12,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI()
-
+app.include_router(gpt.router)
 
 @app.get("/")
 async def root():

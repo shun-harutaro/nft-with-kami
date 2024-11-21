@@ -3,14 +3,14 @@ from openai import AsyncOpenAI
 from utils.config import (
     get_openai_api_key,
     get_openai_assistant_id,
-    get_openai_assistant_id_paraphrase,
+    get_openai_thread_id,
 )
 
 AsyncOpenAI.api_key = get_openai_api_key()
 client = AsyncOpenAI()
 
 ASSISTANT_ID = get_openai_assistant_id()
-ASSISTANT_ID_PARAPHRASE = get_openai_assistant_id_paraphrase()
+THREAD_ID = get_openai_thread_id()
 
 
 async def create_new_thread_id() -> str:
@@ -22,7 +22,7 @@ async def delete_thread_id(thread_id: str):
     await client.beta.threads.delete(thread_id)
 
 
-async def generate_text(thread_id: int, prompt: str) -> str:
+async def generate_text(prompt: str, thread_id: str = THREAD_ID) -> str:
     await client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
