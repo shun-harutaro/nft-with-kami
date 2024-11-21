@@ -25,12 +25,20 @@ git clone git@github.com:shun-harutaro/nft-nenga.git
 cd nft-nenga
 ```
 
-2. Dockerイメージのビルド
+2. `.env`の作成
+```
+touch .env
+echo "OPENAI_API_KEY=[openAI api key]" >> .env
+echo "OPENAI_ASSISTANT_ID=[openAI assistant id]" >> .env
+echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
+```
+
+3. Dockerイメージのビルド
 ```
 docker compose build
 ```
 
-3. コンテナ起動
+4. コンテナ起動
 ```
 docker compose up
 ```
@@ -39,7 +47,7 @@ Detachモード
 docker compose up -d
 ```
 
-4. localhost で開いてみましょう <br>
+5. localhost で開いてみましょう <br>
 frontend: http://localhost:3000 <br>
 backend: http://localhost:8000
 

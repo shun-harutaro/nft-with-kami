@@ -1,6 +1,8 @@
 services:
   backend:
     container_name: backend
+    env_file:
+      - .env
     build: ./backend
     ports:
       - "8000:8000"
