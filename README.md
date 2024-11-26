@@ -9,13 +9,14 @@
 - [ライセンス](#ライセンス)
 
 ## 貢献者ガイド(CONTRIBUTING.md)
-準備中
+本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/shun-harutaro/nft-nenga/blob/main/CONTRIBUTING.md)を**必ず確認ください**
 
 ## 動作環境（確認済み）
 - Ubuntu(WSL2)
-  - Docker
+  - Docker Desktop (windows)
 - macOS(x86-64, arm64)
-  - Docker Desktop もしくは OrbStack
+  - OrbStack
+  - ~~Docker Desktop~~ 動作未確認
 
 ## 動作確認
 1. リポジトリのクローンと移動
@@ -24,25 +25,35 @@ git clone git@github.com:shun-harutaro/nft-nenga.git
 cd nft-nenga
 ```
 
-2. Dockerイメージのビルド
+2. `.env`の作成
 ```
-sudo docker compose build [--no-cache]
-```
-
-3. コンテナ起動
-```
-sudo docker compose up
-# Detachモード
-sudo docker compose up -d
+touch .env
+echo "OPENAI_API_KEY=[openAI api key]" >> .env
+echo "OPENAI_ASSISTANT_ID=[openAI assistant id]" >> .env
+echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
 ```
 
-4. localhost で開いてみましょう <br>
+3. Dockerイメージのビルド
+```
+docker compose build
+```
+
+4. コンテナ起動
+```
+docker compose up
+```
+Detachモード
+```
+docker compose up -d
+```
+
+5. localhost で開いてみましょう <br>
 frontend: http://localhost:3000 <br>
 backend: http://localhost:8000
 
 6. コンテナの停止
 ```
-sudo docker compose down
+docker compose down
 ```
 
 ## APIエンドポイント
@@ -53,14 +64,34 @@ sudo docker compose down
 - nginx (web-server)
 ```
 .
+├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── backend
 │   ├── Dockerfile
+│   ├── cruds
+│   │   └── __init__.py
 │   ├── main.py
+│   ├── models
+│   │   └── __init__.py
 │   ├── pyproject.toml
+│   ├── routers
+│   │   ├── __init__.py
+│   │   └── gpt.py
+│   ├── schemas
+│   │   ├── __init__.py
+│   │   └── text.py
+│   ├── services
+│   │   ├── __init__.py
+│   │   └── gpt.py
+│   ├── tests
+│   │   └── __init__.py
+│   ├── uploads
+│   ├── utils
+│   │   ├── __init__.py
+│   │   └── config.py
 │   └── uv.lock
-├── docker-compose.yml
+├── compose.yml
 └── frontend
     ├── Dockerfile
     ├── README.md
@@ -77,8 +108,17 @@ sudo docker compose down
     │   │   ├── base.css
     │   │   └── main.css
     │   ├── components
+    │   │   ├── LoginButton.vue
     │   │   └── Test.vue
-    │   └── main.js
+    │   ├── composables
+    │   │   └── useAuth.js
+    │   ├── main.js
+    │   ├── router.js
+    │   ├── utils
+    │   │   └── oauth2.js
+    │   └── views
+    │       ├── Callback.vue
+    │       └── Login.vue
     └── vite.config.js
 ```
 

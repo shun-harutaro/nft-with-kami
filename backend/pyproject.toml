@@ -1,3 +1,6 @@
+[tool.isort]
+profile = "black"
+
 [project]
 name = "nft-nenga"
 version = "0.1.0"
@@ -6,5 +9,13 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.4",
     "requests>=2.32.3",
+    "openai>=1.55.0",
     "uvicorn>=0.32.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "flake8>=7.1.1",
+    "isort>=5.13.2",
 ]

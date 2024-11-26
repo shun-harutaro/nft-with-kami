@@ -1,5 +1,8 @@
 services:
   backend:
+    container_name: backend
+    env_file:
+      - .env
     build: ./backend
     ports:
       - "8000:8000"
@@ -18,6 +21,7 @@ services:
       #      path: ./backend/pyproject.toml
 
   frontend:
+    container_name: frontend
     build: ./frontend
     ports:
       - "3000:3000"
