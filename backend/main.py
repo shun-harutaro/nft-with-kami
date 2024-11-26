@@ -1,15 +1,13 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from routers import location
 from fastapi.middleware.cors import CORSMiddleware
 
-#バックエンドは実行時に"http://localhost:8000"にアクセス
-
-from routers import gpt
+from routers import gpt, location
 from utils.config import check_env_variables
 
 
+# バックエンドは実行時に"http://localhost:8000"にアクセス
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     check_env_variables()
@@ -38,4 +36,3 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Hello, World!"}
-
