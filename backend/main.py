@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import gpt, location, line
+from routers import gpt, location, line, auth
 from utils.config import check_env_variables
 
 
@@ -18,6 +18,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(location.router)
 app.include_router(gpt.router)
 app.include_router(line.router)
+app.include_router(auth.router)
 
 
 origins = [
