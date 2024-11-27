@@ -1,15 +1,14 @@
 # フロントエンドは/frontend/src/components
 import requests
-from dotenv import load_dotenv
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-load_dotenv()
+from utils.config import get_google_maps_api_key
+
 
 router = APIRouter()
 
-GOOGLE_MAPS_API_KEY = "AIzaSyDbDeMxbmZ5ElzhxeeNYk2cjBBU4xftHbc"
-# os.getenv("AIzaSyDbDeMxbmZ5ElzhxeeNYk2cjBBU4xftHbc")
+GOOGLE_MAPS_API_KEY = get_google_maps_api_key()
 
 
 @router.get("/location")

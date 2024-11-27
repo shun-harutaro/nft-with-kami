@@ -2,10 +2,18 @@ import os
 
 
 def check_env_variables():
-    env_vars: list[str] = ["OPENAI_API_KEY", "OPENAI_ASSISTANT_ID", "OPENAI_THREAD_ID"]
+    env_vars: list[str] = [
+        "OPENAI_API_KEY",
+        "OPENAI_ASSISTANT_ID",
+        "OPENAI_THREAD_ID",
+        "GOOGLE_MAPS_API_KEY",
+        "hoge"
+    ]
     missing_vars = [var for var in env_vars if os.getenv(var) is None]
     if missing_vars:
-        print(f"WARN Missing environment variables: {', '.join(missing_vars)}")
+        raise EnvironmentError(
+            f"Missing environment variables: {', '.join(missing_vars)}"
+        )
 
 
 def get_openai_api_key() -> str | None:
@@ -18,3 +26,7 @@ def get_openai_assistant_id() -> str | None:
 
 def get_openai_thread_id() -> str | None:
     return os.getenv("OPENAI_THREAD_ID")
+
+
+def get_google_maps_api_key() -> str | None:
+    return os.getenv("GOOGLE_MAPS_API_KEY")
