@@ -8,12 +8,15 @@ load_dotenv()
 
 PINATA_API_KEY=os.getenv("PINATA_API_KEY")
 PINATA_SECRET_API_KEY=os.getenv("PINATA_SECRET_API_KEY")
-PINATA_BASE_URL ="https://api.pinata.cloud/pinning/pinFileToIPFS"
+NFT_ACCOUNT_ADDRESS=os.getenv("NFT_ACCOUNT_ADDRESS")
+
+PINATA_BASE_URL="https://api.pinata.cloud/pinning/pinFileToIPFS"
+NFT_NETWORK_URL="http://172.20.227.190:8545"
+
 
 # Pinataへのアップロード関数
 async def upload_to_pinata(upload_file: UploadFile):
     try:
-
         file_content = await upload_file.read()
         # ヘッダーを設定
         headers = {
@@ -37,5 +40,14 @@ async def upload_to_pinata(upload_file: UploadFile):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
     
-async def get_nft_image(nft_id: str):
+def mint_mft(image_url:str):
     pass
+    
+def get_nft_image(nft_id: str):
+    pass
+
+def get_balance():
+    web3 = Web3(Web3.HTTPProvider(NFT_NETWORK_URL))
+    balance = web3.eth.get_balance(NFT_ACCOUNT_ADDRESS)
+    return {"balance": {balance}, 
+            "currency": "POL"}

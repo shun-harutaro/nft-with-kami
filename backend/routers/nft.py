@@ -1,8 +1,8 @@
-from fastapi import APIRouter,UploadFile
+from fastapi import APIRouter,UploadFile,Body
 import os
 from fastapi import APIRouter, HTTPException
 from schemas.nft_schema import NFTMetadata
-from services.nft_service import upload_to_pinata
+from services.nft_service import upload_to_pinata,get_balance
 
 router = APIRouter()
 
@@ -22,13 +22,14 @@ async def mint_nft(upload_file: UploadFile
     return nft_metadata
 
 
-@router.post(
-    "/nft/get",
+@router.get(
+    "/nft/balance",
     tags=["NFT"],
-    summary="NFT画像の確認",
-    response_model=NFTMetadata,
+    summary="NFTアカウントの残高確認",
 )
-async def get_nft(upload_file: UploadFile, 
-                   file_name: str,
-):
-    pass
+async def balance():
+    try:
+        balance = get_balance()  # 残高を取得
+        return balance  # 辞書を直接返す
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
