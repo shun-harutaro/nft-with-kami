@@ -18,3 +18,9 @@ def get_openai_assistant_id() -> str | None:
 
 def get_openai_thread_id() -> str | None:
     return os.getenv("OPENAI_THREAD_ID")
+
+def get_line_client_id() -> str | None:
+    return os.getenv("LINE_CLIENT_ID")
+
+def get_line_client_secret() -> str | None:
+    return os.getenv("LINE_CLIENT_SECRET")
