@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import apiAxios from "@/plugin/axios";
 export default {
   data() {
     return {
@@ -46,13 +47,12 @@ export default {
             const longitude = position.coords.longitude;
 
             try {
-              const response = await fetch(
-                `http://localhost:8000/location?latitude=${latitude}&longitude=${longitude}`
+              const response = await apiAxios.get(
+                "/location",
+                { params: { latitude, longitude } }
               );
-              const data = await response.json();
-
-              if (data.shrines) {
-                this.shrines = data.shrines;
+              if (response.data && response.data.shrines) {
+                this.shrines = response.data.shrines;
               } else {
                 this.error = "データの取得に失敗しました。";
               }
