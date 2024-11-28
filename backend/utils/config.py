@@ -37,5 +37,5 @@ def get_line_client_id() -> str | None:
     return os.getenv("LINE_CLIENT_ID")
 
 
-def get_line_secret() -> str | None:
+def get_line_client_secret() -> str | None:
     return os.getenv("LINE_CLIENT_SECRET")
