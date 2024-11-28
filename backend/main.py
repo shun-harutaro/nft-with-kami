@@ -7,7 +7,6 @@ from routers import gpt, location, line
 from utils.config import check_env_variables
 
 
-# バックエンドは実行時に"http://localhost:8000"にアクセス
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     check_env_variables()
@@ -15,7 +14,7 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.include_router(location.router)
 app.include_router(gpt.router)
 app.include_router(line.router)

@@ -31,6 +31,7 @@ touch .env
 echo "OPENAI_API_KEY=[openAI api key]" >> .env
 echo "OPENAI_ASSISTANT_ID=[openAI assistant id]" >> .env
 echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
+echo "GOOGLE_MAPS_API_KEY=[google maps api key]" >> .env
 ```
 
 3. Dockerイメージのビルド
