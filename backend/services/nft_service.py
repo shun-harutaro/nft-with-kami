@@ -16,8 +16,7 @@ PINATA_SECRET_API_KEY=get_pinata_secret_api_key()
 NFT_ACCOUNT_ADDRESS=get_nft_acount_address()
 NFT_PRIVATE_KEY=get_nft_private_key()
 
-#NFT_NETWORK_URL="https://polygon-rpc.com/"
-NFT_NETWORK_URL="http://172.19.114.82:8545"
+NFT_NETWORK_URL="https://polygon-rpc.com/"
 
 web3 = Web3(Web3.HTTPProvider(NFT_NETWORK_URL))
 web3.eth.default_account = get_nft_acount_address()
@@ -91,7 +90,7 @@ def mint_nft(metadata_url, private_key):
         transaction = contract.functions.createNFT(metadata_url).build_transaction({
             "from": NFT_ACCOUNT_ADDRESS,
             #"chainId": 137,
-            "chainId": 1337,
+            "chainId": 137,
             "gas": 5000000,  # ガスリミット
             "gasPrice": gas_price,  # 動的なガス価格
             "nonce": nonce,  # nonceを明示的に設定
@@ -147,8 +146,8 @@ def create_metadata(filename:str,image_url:str):
                     description="2024年 NFT with 神により、生成されたおみくじです。",
                     image=image_url,
                     attributes=[
-                        {"trait_type": "Luck", "value": "Great Fortune"},
-                        {"trait_type": "Blessing", "value": "Divine Guidance"},
+                        {"trait_type": "Year", "value": "2024"},
+                        {"trait_type": "Grade", "value": "Super"},
                     ],
                 )
     return meta_data
