@@ -25,8 +25,8 @@ web3.eth.default_account = get_nft_acount_address()
 with open("/app/services/HackuNFT_abi.json", "r") as abi_file:
     abi = json.load(abi_file)  # JSONとして読み込む
 
-#contract_address = "0xfB40b73E6cEe109Ae7614e621ffA841Dd1EB1584"  # デプロイ済みのコントラクトアドレス
-contract_address = web3.to_checksum_address("0x4ca9658f6cee2c09d59a183a87f75c0528c87315")  # デプロイ済みのコントラクトアドレス
+
+contract_address = "0xfB40b73E6cEe109Ae7614e621ffA841Dd1EB1584"  # デプロイ済みのコントラクトアドレス
 contract = web3.eth.contract(address=contract_address, abi=abi)
 
 

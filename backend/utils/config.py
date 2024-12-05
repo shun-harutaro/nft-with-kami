@@ -55,10 +55,5 @@ def get_nft_acount_address() -> str | None:
 def get_nft_private_key() -> str | None:
     return os.getenv("NFT_PRIVATE_KEY")
 
-
-
-
-
-
-
-
+def get_line_client_secret() -> str | None:
+    return os.getenv("LINE_CLIENT_SECRET")
