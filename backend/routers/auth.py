@@ -1,10 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 import secrets
 from urllib.parse import urlencode
 
+from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
 from utils.config import get_line_client_id
-from services.line import get_token
+from services.line import get_profile, get_token
 
 router = APIRouter()
 CLIENT_ID = get_line_client_id()
@@ -27,8 +28,27 @@ async def login():
 
 
 @router.get("/auth/callback")
-async def auth_callback(code: str, state: str):
+async def auth_callback(
+    response: Response,
+    code: str, state: str
+    ):
     # TODO stateの検証
+    if not code:
+        raise HTTPException(status_code=400, detail="Authorization code not found.")
     token_response = await get_token(code)
 
-    return {"state": state, "res": token_response}
+    id_token = token_response.get("id_token")
+    if not id_token:
+        raise HTTPException(status_code=400, detail="ID token not found.")
+
+    profile = await get_profile(id_token)
+
+    response.set_cookie(
+        key="id_token",
+        value=id_token,
+        httponly=True,
+        secure=True,
+        max_age=3600,
+    )
+
+    return { "message": "Login successful!", "user": profile }

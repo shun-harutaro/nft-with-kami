@@ -1,4 +1,3 @@
-import requests
 import httpx
 from utils.config import get_line_client_id, get_line_client_secret
 
@@ -22,7 +21,7 @@ async def get_token(code: str):
         return response.json()
 
 
-def get_profile(id_token):
+async def get_profile(id_token):
     # LINE API の IDトークン検証エンドポイント
     url = "https://api.line.me/oauth2/v2.1/verify"
 
@@ -31,6 +30,7 @@ def get_profile(id_token):
         "id_token": id_token,  # 取得済みのIDトークン
         "client_id": CLIENT_ID,  # LINE DevelopersコンソールのチャンネルID
     }
-
-    response = requests.post(url, data=data)
-    return response.json()
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, data=data)
+        response.raise_for_status()
+        return response.json()
