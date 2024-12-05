@@ -34,6 +34,10 @@ echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
 echo "GOOGLE_MAPS_API_KEY=[google maps api key]" >> .env
 echo "LINE_CLIENT_ID=[line client id]" >> .env
 echo "LINE_CLIENT_SECRET=[line client secret]" >> .env
+echo "PINATA_API_KEY=[pinata api key]" >> .env
+echo "PINATA_SECRET_API_KEY=[pinata api secret]" >> .env
+echo "NFT_ACCOUNT_ADDRESS=[nft account address]" >> .env
+echo "NFT_PRIVATE_KEY=[nft private key]" >> .env
 ```
 
 3. Dockerイメージのビルド
