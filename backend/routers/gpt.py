@@ -1,14 +1,9 @@
-import os
-
 from fastapi import APIRouter, HTTPException
 
 from schemas.text import TextResponse
 from services.gpt import generate_text
 
 router = APIRouter()
-
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post(
