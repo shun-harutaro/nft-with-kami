@@ -47,8 +47,9 @@ async def auth_callback(
         key="id_token",
         value=id_token,
         httponly=True,
-        secure=True,
-        max_age=3600,
+        secure=False, # httpsでのみ
+        samesite="none", # クロスオリジン対応
+        #max_age=3600,
     )
-
-    return { "message": "Login successful!", "user": profile }
+    return RedirectResponse(url="http://localhost:3000", status_code=303)
+    #return { "profile": profile, "id_token": id_token }
