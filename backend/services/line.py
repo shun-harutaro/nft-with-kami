@@ -13,7 +13,7 @@ async def get_token(code: str):
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "code": code,
-        "redirect_uri": "http://localhost:8000/auth/callback",
+        "redirect_uri": "https://localhost/api/auth/callback",
     }
     async with httpx.AsyncClient() as client:
         response = await client.post(url, data=data, headers=headers)

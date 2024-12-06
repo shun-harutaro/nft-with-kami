@@ -2,7 +2,7 @@
   import LoginButton from "@/components/LoginButton.vue"
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:8000/auth/login"
+    window.location.href = "/api/auth/login"
   }
 </script>
 

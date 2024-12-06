@@ -19,7 +19,7 @@ async def login():
     params = {
         "response_type": "code",
         "client_id": CLIENT_ID,
-        "redirect_uri": "http://localhost:8000/auth/callback",
+        "redirect_uri": "https://localhost/api/auth/callback",
         "state": state,
         "scope": "profile openid",
     }
@@ -41,15 +41,15 @@ async def auth_callback(
     if not id_token:
         raise HTTPException(status_code=400, detail="ID token not found.")
 
-    profile = await get_profile(id_token)
+    #profile = await get_profile(id_token)
 
     response.set_cookie(
         key="id_token",
         value=id_token,
         httponly=True,
-        secure=False, # httpsでのみ
+        secure=True, # httpsでのみ
         samesite="none", # クロスオリジン対応
         #max_age=3600,
     )
-    return RedirectResponse(url="http://localhost:3000", status_code=303)
+    return RedirectResponse(url="https://localhost", status_code=303)
     #return { "profile": profile, "id_token": id_token }
