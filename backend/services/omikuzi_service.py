@@ -1,5 +1,6 @@
 from PIL import Image,ImageDraw, ImageFont
 from tempfile import NamedTemporaryFile
+import os
 
 #縦向きの文字を追加
 def add_text_to_image_vertical(img, text, position, font_path, font_size, max_length=0, text_color=(0, 0, 0)):
@@ -47,6 +48,11 @@ def add_image_to_image(base_img,add_img ,position, size):
 #指定文字数で改行を行う
 def wrap_text(text, max_length):
     return [text[i:i+max_length] for i in range(0, len(text), max_length)]
+
+#ファイルの削除
+def remove_file(file_path: str):
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 #おみくじの生成
 def generate_omikuzi(img_path, font_path, omikuzi_text):

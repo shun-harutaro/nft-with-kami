@@ -1,17 +1,13 @@
 from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import FileResponse
 from schemas.omikuzi_schema import OmikuziText
-from services.omikuzi_service import generate_omikuzi
-import os
+from services.omikuzi_service import generate_omikuzi,remove_file
 
 router = APIRouter()
 omikuzi_template = '/app/services/omikuzi/omikuzi_template.png'
 font = '/app/services/omikuzi/玉ねぎ楷書激無料版v7改.ttf'
 
-def remove_file(file_path: str):
-    """一時ファイルを削除する"""
-    if os.path.exists(file_path):
-        os.remove(file_path)
+
 
 @router.post(
     "/omikuzi",
