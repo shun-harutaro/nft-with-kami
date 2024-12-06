@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
 from utils.config import get_line_client_id
-from services.line import get_profile, get_token
+from services.line import get_token
 
 router = APIRouter()
 CLIENT_ID = get_line_client_id()
@@ -47,6 +47,5 @@ async def auth_callback(
         httponly=True,
         #secure=True, # httpsでのみ
         #samesite="none", # クロスオリジン対応
-        #max_age=3600,
     )
     return response
