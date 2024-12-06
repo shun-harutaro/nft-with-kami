@@ -48,7 +48,7 @@ export default {
 
             try {
               const response = await apiAxios.get(
-                "/location",
+                "/api/location",
                 { params: { latitude, longitude } }
               );
               if (response.data && response.data.shrines) {
