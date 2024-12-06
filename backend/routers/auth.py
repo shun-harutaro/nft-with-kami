@@ -4,11 +4,12 @@ from urllib.parse import urlencode
 
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
-from utils.config import get_line_client_id
+from utils.config import get_line_client_id, get_line_redirect_uri
 from services.line import get_token
 
 router = APIRouter()
 CLIENT_ID = get_line_client_id()
+REDIRECT_URI = get_line_redirect_uri()
 
 
 @router.get("/auth/login")
@@ -19,7 +20,7 @@ async def login():
     params = {
         "response_type": "code",
         "client_id": CLIENT_ID,
-        "redirect_uri": "https://localhost/api/auth/callback",
+        "redirect_uri": REDIRECT_URI,
         "state": state,
         "scope": "profile openid",
     }

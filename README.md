@@ -40,7 +40,7 @@ echo "NFT_ACCOUNT_ADDRESS=[nft account address]" >> .env
 echo "NFT_PRIVATE_KEY=[nft private key]" >> .env
 ```
 ```
-echo "LINE_REDIRECT_URL=https://localhost/api/auth/callback" >> .env
+echo "LINE_REDIRECT_URI=https://localhost/api/auth/callback" >> .env
 ```
 
 3. 自己署名証明書の発行

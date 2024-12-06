@@ -1,8 +1,9 @@
 import httpx
-from utils.config import get_line_client_id, get_line_client_secret
+from utils.config import get_line_client_id, get_line_client_secret, get_line_redirect_uri
 
 CLIENT_ID = get_line_client_id()
 CLIENT_SECRET = get_line_client_secret()
+REDIRECT_URI = get_line_redirect_uri()
 
 
 async def get_token(code: str):
@@ -13,7 +14,7 @@ async def get_token(code: str):
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "code": code,
-        "redirect_uri": "https://localhost/api/auth/callback",
+        "redirect_uri": REDIRECT_URI,
     }
     async with httpx.AsyncClient() as client:
         response = await client.post(url, data=data, headers=headers)
