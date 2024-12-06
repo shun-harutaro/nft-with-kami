@@ -47,8 +47,9 @@ export default {
             const longitude = position.coords.longitude;
 
             try {
-              const response = await fetch(
-                `http://localhost:8000/location?latitude=${latitude}&longitude=${longitude}`
+              const response = await apiAxios.get(
+                "/api/location",
+                { params: { latitude, longitude } }
               );
               const data = await response.json();
 

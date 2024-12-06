@@ -1,14 +1,15 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter
 import secrets
 from urllib.parse import urlencode
 
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
-from utils.config import get_line_client_id
-from services.line import get_profile, get_token
+from utils.config import get_line_client_id, get_line_redirect_uri
+from services.line import get_token
 
 router = APIRouter()
 CLIENT_ID = get_line_client_id()
+REDIRECT_URI = get_line_redirect_uri()
 
 
 @router.get("/auth/login")
@@ -19,7 +20,7 @@ async def login():
     params = {
         "response_type": "code",
         "client_id": CLIENT_ID,
-        "redirect_uri": "http://localhost:8000/auth/callback",
+        "redirect_uri": REDIRECT_URI,
         "state": state,
         "scope": "profile openid",
     }
@@ -29,7 +30,6 @@ async def login():
 
 @router.get("/auth/callback")
 async def auth_callback(
-    response: Response,
     code: str, state: str
     ):
     # TODO stateの検証
@@ -41,15 +41,12 @@ async def auth_callback(
     if not id_token:
         raise HTTPException(status_code=400, detail="ID token not found.")
 
-    profile = await get_profile(id_token)
-
+    response = RedirectResponse(url="/")
     response.set_cookie(
         key="id_token",
         value=id_token,
         httponly=True,
-        secure=False, # httpsでのみ
-        samesite="none", # クロスオリジン対応
-        #max_age=3600,
+        #secure=True, # httpsでのみ
+        #samesite="none", # クロスオリジン対応
     )
-    return RedirectResponse(url="http://localhost:3000", status_code=303)
-    #return { "profile": profile, "id_token": id_token }
+    return response
