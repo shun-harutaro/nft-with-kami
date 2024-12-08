@@ -62,11 +62,16 @@ Detachモード
 docker compose up -d
 ```
 
-6. localhost で開いてみましょう <br>
+6. テーブル作成
+```
+docker compose exec backend uv run migrate_db.py
+```
+
+7. localhost で開いてみましょう <br>
 frontend: https://localhost/ <br>
 backend: https://localhost/api/
 
-7. コンテナの停止
+8. コンテナの停止
 ```
 docker compose down
 ```
