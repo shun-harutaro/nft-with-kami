@@ -2,15 +2,11 @@ import axios from 'axios';
 
 const apiAxios = axios.create({
   timeout: 5000,
+  withCredentials: true
 });
 
 apiAxios.interceptors.request.use(
   (config) => {
-    // 例: Authorizationヘッダーを追加
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
     return config;
   },
   (error) => Promise.reject(error)
