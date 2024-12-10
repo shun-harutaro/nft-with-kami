@@ -8,6 +8,7 @@ import cruds.user as user_crud
 
 router = APIRouter()
 
+
 @router.get(
     "/users/me",
     tags=["users"],
@@ -33,7 +34,7 @@ async def login(id_token: str = Cookie(None)):
     if id_token:
         user_id = get_user_id(id_token)
         profile = get_profile(id_token)
-        return { "id": user_id, **profile }
+        return {"id": user_id, **profile}
     return {"message": "No cookie received"}
 
 
@@ -42,7 +43,7 @@ async def login(id_token: str = Cookie(None)):
     tags=["users"],
     summary="新規ユーザの作成",
     response_model=User,
-    status_code=201
+    status_code=201,
 )
 async def create_user_endpoint(
     user_id: str = Depends(get_user_id_from_cookie),
@@ -68,5 +69,3 @@ async def get_user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return await user_crud.delete_user(db, user)
-
-
