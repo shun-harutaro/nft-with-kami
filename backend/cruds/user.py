@@ -1,28 +1,28 @@
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 from models.user import User
 from typing import Optional
 
 
-def create_user(db: Session, user: User) -> User:
+async def create_user(db: AsyncSession, user: User) -> User:
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    await db.commit()
+    await db.refresh(user)
     return user
 
 
-def get_user(db: Session, user_id: str) -> Optional[User]:
-    return db.get(User, user_id)
+async def get_user(db: AsyncSession, user_id: str) -> Optional[User]:
+    return await db.get(User, user_id)
 
 
-def update_user(db: Session, user: User) -> User:
+async def update_user(db: AsyncSession, user: User) -> User:
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    await db.commit()
+    await db.refresh(user)
     return user
 
 
-def delete_user(db: Session, user_id: str) -> None:
+async def delete_user(db: AsyncSession, user_id: str) -> None:
     user = db.get(User, user_id)
     if user:
-        db.delete(user)
-        db.commit()
+        await db.delete(user)
+        await db.commit()
