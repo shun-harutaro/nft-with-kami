@@ -1,10 +1,11 @@
-#import ssl
-from typing import AsyncGenerator#, Dict
+# import ssl
+from typing import AsyncGenerator  # , Dict
 
-from sqlmodel import SQLModel, create_engine
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-#from config import get_db_cert_path, get_db_object
+# from config import get_db_cert_path, get_db_object
 
 
 def create_dev_async_engine():
@@ -17,7 +18,7 @@ def create_dev_async_engine():
         database="dev",
         query={"charset": "utf8"},
     )
-    async_engine = create_engine(url, echo=True, future=True)
+    async_engine = create_async_engine(url, echo=True, future=True)
     return async_engine
 
 
@@ -44,7 +45,9 @@ def create_prod_async_engine():
 
 
 # 環境に応じたエンジンを作成
-async_engine = create_dev_async_engine()# if IS_DEV_MODE else create_prod_async_engine()
+async_engine = (
+    create_dev_async_engine()
+)  # if IS_DEV_MODE else create_prod_async_engine()
 
 # 非同期セッションの作成
 async_session = AsyncSession(async_engine)
@@ -57,5 +60,5 @@ class Base(SQLModel):
 
 # データベースセッションを提供するジェネレーター関数
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session() as session:
+    async with async_session as session:
         yield session

@@ -1,5 +1,10 @@
+from fastapi import Cookie, Request
 import httpx
-from utils.config import get_line_client_id, get_line_client_secret, get_line_redirect_uri
+from utils.config import (
+    get_line_client_id,
+    get_line_client_secret,
+    get_line_redirect_uri,
+)
 from utils.jwt import decode_hs256
 
 CLIENT_ID = get_line_client_id()
@@ -28,12 +33,14 @@ def get_user_id(id_token):
     return decoded_token["sub"]
 
 
+def get_user_id_from_cookie(id_token: str = Cookie(None)) -> str:
+    decoded_token = decode_hs256(id_token, CLIENT_ID, CLIENT_SECRET)
+    return decoded_token["sub"]
+
+
 def get_profile(id_token):
     decoded_token = decode_hs256(id_token, CLIENT_ID, CLIENT_SECRET)
-    return {
-        "name": decoded_token["name"],
-        "picture": decoded_token["picture"]
-    }
+    return {"name": decoded_token["name"], "picture": decoded_token["picture"]}
 
 
 async def get_profile_by_endpoint(id_token):
