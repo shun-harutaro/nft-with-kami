@@ -4,11 +4,19 @@
     <div v-if="loading">ロード中...</div>
     <div v-if="error">{{ error }}</div>
     <div v-if="!loading && !error && shrines.length > 0">
+<<<<<<< HEAD
       <h2>参拝したい神社を選択してください</h2>
       <ul>
         <li v-for="shrine in shrines" :key="shrine.name">
           <button class="shrine-button" @click="selectShrine(shrine)">
             {{ shrine.name }} ： {{ shrine.distance }}
+=======
+      <h2>神社を選択してください</h2>
+      <ul>
+        <li v-for="shrine in shrines" :key="shrine.name">
+          <button class="shrine-button" @click="selectShrine(shrine)">
+            {{ shrine.name }}
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
           </button>
         </li>
       </ul>
@@ -23,8 +31,11 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import apiAxios from "@/plugin/axios";
 
+=======
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
 export default {
   data() {
     return {
@@ -56,6 +67,7 @@ export default {
                 "/api/location",
                 { params: { latitude, longitude } }
               );
+<<<<<<< HEAD
               if (response.data && response.data.shrines) {
                 // 必要なデータだけを保持
                 this.shrines = response.data.shrines.map((shrine) => ({
@@ -63,6 +75,12 @@ export default {
                   address: shrine.address,
                   distance: shrine.distance,
                 }));
+=======
+              const data = await response.json();
+
+              if (data.shrines) {
+                this.shrines = data.shrines;
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
               } else {
                 this.error = "データの取得に失敗しました。";
               }
@@ -99,6 +117,10 @@ button {
   padding: 0.5em 1em;
   font-size: 1em;
   cursor: pointer;
+<<<<<<< HEAD
+=======
+  margin-bottom: 1em;
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
 }
 
 ul {
@@ -111,7 +133,11 @@ li {
 }
 
 .shrine-button {
+<<<<<<< HEAD
   display: inline-block; /* インラインブロックで幅を調整 */
+=======
+  display: inline-block;
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
   font-size: 1em;
   padding: 0.75em 1.5em;
   text-align: center;
@@ -119,20 +145,27 @@ li {
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
+<<<<<<< HEAD
   width: auto; /* 自動調整 */
   white-space: nowrap; /* テキストが改行されないようにする */
+=======
+  min-width: 200px; /* 全ボタンの幅を揃える */
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
 }
 
 .shrine-button:hover {
   background-color: #e6e6e6;
 }
 
+<<<<<<< HEAD
 ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* ボタンを左揃え */
 }
 
+=======
+>>>>>>> bdcd79bde43e00acfd50cc3e2d22fb5dcf938832
 strong {
   margin-right: 0.5em;
 }
