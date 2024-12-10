@@ -34,14 +34,26 @@ echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
 echo "GOOGLE_MAPS_API_KEY=[google maps api key]" >> .env
 echo "LINE_CLIENT_ID=[line client id]" >> .env
 echo "LINE_CLIENT_SECRET=[line client secret]" >> .env
+echo "PINATA_API_KEY=[pinata api key]" >> .env
+echo "PINATA_SECRET_API_KEY=[pinata api secret]" >> .env
+echo "NFT_ACCOUNT_ADDRESS=[nft account address]" >> .env
+echo "NFT_PRIVATE_KEY=[nft private key]" >> .env
+```
+```
+echo "LINE_REDIRECT_URI=https://localhost/api/auth/callback" >> .env
 ```
 
-3. Dockerイメージのビルド
+3. 自己署名証明書の発行
+```
+openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout localhost-key.pem -out localhost-cert.pem
+```
+
+4. Dockerイメージのビルド
 ```
 docker compose build
 ```
 
-4. コンテナ起動
+5. コンテナ起動
 ```
 docker compose up
 ```
@@ -50,11 +62,16 @@ Detachモード
 docker compose up -d
 ```
 
-5. localhost で開いてみましょう <br>
-frontend: http://localhost:3000 <br>
-backend: http://localhost:8000
+6. テーブル作成
+```
+docker compose exec backend uv run migrate_db.py
+```
 
-6. コンテナの停止
+7. localhost で開いてみましょう <br>
+frontend: https://localhost/ <br>
+backend: https://localhost/api/
+
+8. コンテナの停止
 ```
 docker compose down
 ```
@@ -63,7 +80,8 @@ docker compose down
 未定義
 
 ## ディレクトリ構成
-- api (application - FastAPI)
+- frontend (Vue.js)
+- backend (FastAPI)
 - nginx (web-server)
 ```
 .
@@ -80,13 +98,24 @@ docker compose down
 │   ├── pyproject.toml
 │   ├── routers
 │   │   ├── __init__.py
-│   │   └── gpt.py
+│   │   ├── auth.py
+│   │   ├── gpt.py
+│   │   ├── location.py
+│   │   └── nft.py
 │   ├── schemas
 │   │   ├── __init__.py
+│   │   ├── nft_schema.py
 │   │   └── text.py
 │   ├── services
+│   │   ├── HackuNFT_abi.json
+│   │   ├── HackuNFT_bytecode.json
 │   │   ├── __init__.py
-│   │   └── gpt.py
+│   │   ├── compile.py
+│   │   ├── gpt.py
+│   │   ├── line.py
+│   │   ├── nft_contract.py
+│   │   ├── nft_service.py
+│   │   └── ogp_service.py
 │   ├── tests
 │   │   └── __init__.py
 │   ├── uploads
@@ -95,34 +124,32 @@ docker compose down
 │   │   └── config.py
 │   └── uv.lock
 ├── compose.yml
-└── frontend
-    ├── Dockerfile
-    ├── README.md
-    ├── eslint.config.js
-    ├── index.html
-    ├── jsconfig.json
-    ├── package-lock.json
-    ├── package.json
-    ├── public
-    │   └── favicon.ico
-    ├── src
-    │   ├── App.vue
-    │   ├── assets
-    │   │   ├── base.css
-    │   │   └── main.css
-    │   ├── components
-    │   │   ├── LoginButton.vue
-    │   │   └── Test.vue
-    │   ├── composables
-    │   │   └── useAuth.js
-    │   ├── main.js
-    │   ├── router.js
-    │   ├── utils
-    │   │   └── oauth2.js
-    │   └── views
-    │       ├── Callback.vue
-    │       └── Login.vue
-    └── vite.config.js
+├── frontend
+│   ├── Dockerfile
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── jsconfig.json
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   └── favicon.ico
+│   ├── src
+│   │   ├── App.vue
+│   │   ├── assets
+│   │   │   ├── base.css
+│   │   │   ├── btn_login_base.png
+│   │   │   └── main.css
+│   │   ├── components
+│   │   │   └── LoginButton.vue
+│   │   ├── main.js
+│   │   ├── plugin
+│   │   │   └── axios.js
+│   │   ├── router.js
+│   │   └── views
+│   │       ├── Location.vue
+│   │       └── Login.vue
+│   └── vite.config.js
+└── nginx.conf
 ```
 
 ## ライセンス

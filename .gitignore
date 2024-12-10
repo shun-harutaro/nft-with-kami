@@ -131,3 +131,6 @@ dist
 
 # python
 __pycache__
+
+# ssl
+*.pem
