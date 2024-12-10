@@ -24,6 +24,11 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       #develop:
       #  watch:
       #    - action: sync
@@ -43,6 +48,11 @@ services:
       - ./frontend:/app
       - node_modules:/app/node_modules
     command: ["npm", "run", "dev"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mysql:
     platform: linux/amd64
