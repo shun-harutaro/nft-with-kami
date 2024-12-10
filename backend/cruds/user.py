@@ -21,8 +21,6 @@ async def update_user(db: AsyncSession, user: User) -> User:
     return user
 
 
-async def delete_user(db: AsyncSession, user_id: str) -> None:
-    user = db.get(User, user_id)
-    if user:
-        await db.delete(user)
-        await db.commit()
+async def delete_user(db: AsyncSession, user: User) -> None:
+    await db.delete(user)
+    await db.commit()

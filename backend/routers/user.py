@@ -53,3 +53,20 @@ async def create_user_endpoint(
         raise HTTPException(status_code=400, detail="User already exists")
     user = User(id=user_id, thread_id="thread_default")
     return await user_crud.create_user(db, user)
+
+
+@router.delete(
+    "/users/me",
+    tags=["users"],
+    summary="ユーザの削除",
+)
+async def get_user(
+    user_id: str = Depends(get_user_id_from_cookie),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await user_crud.get_user(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return await user_crud.delete_user(db, user)
+
+
