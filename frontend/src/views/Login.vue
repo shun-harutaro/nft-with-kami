@@ -1,7 +1,28 @@
 <script setup>
-  import LoginButton from "@/components/LoginButton.vue"
+import { computed, onMounted } from "vue";
+import { useUserProfileStore } from "@/stores/userProfileStore";
+import LoginButton from "@/components/LoginButton.vue"
+
+// ストアのインスタンスを取得
+const userStore = useUserProfileStore();
+
+// ログイン状態とユーザー情報を取得
+const isLoggedIn = computed(() => userStore.isLoggedIn);
+const displayName = computed(() => userStore.displayName);
+const profileImageUrl = computed(() => userStore.profileImageUrl);
+
+// 初期化処理: コンポーネントのマウント時にプロフィールを取得
+onMounted(() => {
+  userStore.fetchUserProfile();
+});
+
+// ログアウト処理
+const handleLogout = () => {
+  userStore.logout();
+};
 </script>
- 
+
+
 <template>
 <div class="gallery-container">
 <div class="gallery-wrapper">
@@ -26,15 +47,19 @@
         class="gallery-content"
         alt="Gallery Content"
       />
-<!--LINEログイン-->
-<LoginButton style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);">
-</LoginButton>
+    <!--LINEログイン-->
+    <div v-if="isLoggedIn" style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" >
+      <router-link to="/shintaku">神託の画面へ</router-link>
+    </div>
+    <div v-else>
+      <LoginButton style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" />
+    </div>
 
- 
     </div>
 </div>
 </template>
- 
+
+
 <style scoped>
 .gallery-container {
   background: linear-gradient(to bottom, #35ECBB, #FF9C12);
@@ -45,7 +70,7 @@
   overflow: hidden;
   margin: 0 auto;
 }
- 
+
 .gallery-wrapper {
   display: flex;
   flex-direction: column;
@@ -54,7 +79,7 @@
   width: 100%;
   padding: 106px 0;
 }
- 
+
 .gallery-background {
   position: absolute;
   inset: 0;
@@ -63,7 +88,7 @@
   object-fit: cover;
   object-position: center;
 }
- 
+
 .gallery-header {
   aspect-ratio: 1.22;
   object-fit: contain;
@@ -71,7 +96,7 @@
   width: 219px;
   max-width: 100%;
 }
- 
+
 .gallery-content {
   aspect-ratio: 1.26;
   object-fit: contain;
@@ -81,7 +106,7 @@
   position: relative;
   top: 20px;
 }
- 
+
 .gallery-footer {
   aspect-ratio: 3.45;
   object-fit: contain;
@@ -93,7 +118,7 @@
   top: 50px;
   z-index: 100000;
 }
- 
+
 .visually-hidden {
   position: absolute;
   width: 1px;
