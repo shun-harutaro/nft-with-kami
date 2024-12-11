@@ -1,14 +1,14 @@
 <template>
   <div class="result-screen">
     <div class="share-container">
-      <button 
-        class="share-button" 
+      <button
+        class="share-button"
         @click="handleShare"
         aria-label="おみくじをシェア">
         <span>おみくじをシェア</span>
       </button>
     </div>
-    <button 
+    <button
       class="return-button"
       @click="handleReturn"
       aria-label="最初へ戻る">
@@ -17,8 +17,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import apiAxios from "@/plugin/axios";
+<script>
 import { defineComponent } from 'vue';
 
 export default defineComponent({
