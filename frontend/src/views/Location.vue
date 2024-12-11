@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import apiAxios from "@/plugin/axios";
+import axios from "axios";
 
 export default {
   data() {
@@ -83,7 +83,7 @@ export default {
             const longitude = position.coords.longitude;
 
             try {
-              const response = await apiAxios.get("/api/location", {
+              const response = await axios.get("/api/location", {
                 params: { latitude, longitude },
               });
               if (response.data && response.data.shrines) {
