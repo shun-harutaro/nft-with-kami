@@ -34,7 +34,7 @@ const handleClick = () => {
     <div class="gallery-wrapper">
       <img
         loading="lazy"
-        src="@/assets/img/background-shrine-alpha.png"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/0d729f22bd7e6bb23fc6db25a2cc4ebfddb2b47f887454b80c7af3547b1a528b?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
         class="gallery-background"
         alt="背景画像(神社)"
       />
@@ -46,8 +46,8 @@ const handleClick = () => {
       />
       <img
         loading="lazy"
-        src="@/assets/img/shimenawa.png"
-        class="gallery-content"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/03f63f5fe13b4cb994f7f82af912ed64800f4fba07839ebe49c033b475648fea?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        class="gallery-overlay"
         alt="しめ縄"
       />
 
@@ -60,6 +60,7 @@ const handleClick = () => {
         </button>
         <button
           class="view-history-button"
+          style="position: absolute; bottom: 20px; left: 20px;"
           @click="viewHistory"
         >
           過去の神託を見る
@@ -94,7 +95,8 @@ const handleClick = () => {
   padding: 106px 0;
 }
 
-.gallery-background {
+.gallery-background,
+.gallery-overlay {
   position: absolute;
   inset: 0;
   height: 100%;
@@ -109,6 +111,7 @@ const handleClick = () => {
   object-position: center;
   width: 219px;
   max-width: 100%;
+  z-index:10 ;
 }
 
 .gallery-content {
