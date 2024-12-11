@@ -12,10 +12,7 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 
-app = FastAPI(
-    lifespan=lifespan,
-    root_path="/api"
-)
+app = FastAPI(lifespan=lifespan, root_path="/api")
 app.include_router(location.router)
 app.include_router(gpt.router)
 app.include_router(auth.router)

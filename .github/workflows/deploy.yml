@@ -1,0 +1,31 @@
+name: Build container and push to ACR
+
+on:
+  workflow_dispatch:
+
+env:
+  IMAGE: 'nft-with-kami-api'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: 'Set up Docker Buildx'
+        uses: docker/setup-buildx-action@v3
+
+      - name: 'Docker Login'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.LOGIN_SERVER }}
+          username: ${{ vars.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: 'Compose Customized Docker Image'
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -f ./backend/Dockerfile \
+            -t ${{ vars.LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }} \
+            --push ./backend
