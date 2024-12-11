@@ -1,7 +1,10 @@
 <script setup>
 import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useUserProfileStore } from "@/stores/userProfileStore";
 import LoginButton from "@/components/LoginButton.vue"
+
+const router = useRouter();
 
 // ストアのインスタンスを取得
 const userStore = useUserProfileStore();
@@ -16,47 +19,58 @@ onMounted(() => {
   userStore.fetchUserProfile();
 });
 
-// ログアウト処理
-const handleLogout = () => {
-  userStore.logout();
-};
+const viewHistory = () => {
+  /* TODO: 実装 */
+}
+
+const handleClick = () => {
+  router.push("/location")
+}
 </script>
 
 
 <template>
-<div class="gallery-container">
-<div class="gallery-wrapper">
-<!--神社-->
-<img
+  <div class="gallery-container">
+    <div class="gallery-wrapper">
+      <img
         loading="lazy"
         src="@/assets/img/background-shrine-alpha.png"
         class="gallery-background"
-        alt=""
+        alt="背景画像(神社)"
       />
-<!--NFTwith神-->
-<img
+      <img
         loading="lazy"
         src="@/assets/img/nft-with-kami-logo.png"
         class="gallery-header"
-        alt="Gallery Header"
+        alt="NFTwith神ロゴ"
       />
-<!--太陽モワモワ-->
-<img
+      <img
         loading="lazy"
         src="@/assets/img/shimenawa.png"
         class="gallery-content"
-        alt="Gallery Content"
+        alt="しめ縄"
       />
-    <!--LINEログイン-->
-    <div v-if="isLoggedIn" style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" >
-      <router-link to="/shintaku">神託の画面へ</router-link>
-    </div>
-    <div v-else>
-      <LoginButton style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" />
-    </div>
 
+      <div v-if="isLoggedIn">
+        <button
+          class="oracle-button"
+          @click="handleClick"
+        >
+          神託を<br/>得る
+        </button>
+        <button
+          class="view-history-button"
+          @click="viewHistory"
+        >
+          過去の神託を見る
+        </button>
+      </div>
+      <div v-else>
+        <LoginButton
+          style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" />
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 
@@ -130,4 +144,62 @@ const handleLogout = () => {
   white-space: nowrap;
   border: 0;
 }
+
+.oracle-button {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-45%, -45%);
+  background-color: rgba(255, 69, 0, 1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  font: 400 50px 'Noto Serif JP', sans-serif;
+  height: 200px; /* ボタンのサイズ */
+  width: 200px;
+  text-align: center;
+  transition: transform 0.2s ease;
+  z-index: 20; /* ボタンをしめ縄の後ろに配置 */
+}
+
+.oracle-button:hover,
+.oracle-button:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.oracle-button:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.oracle-button:active {
+  transform: scale(0.98);
+}
+
+.view-history-button {
+  position: relative;
+  border-radius: 12px;
+  background-color: #ff4500;
+  align-self: center;
+  width: 242px;
+  max-width: 100%;
+  padding: 24px 28px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-history-button:hover,
+.view-history-button:focus {
+  background-color: #ff5722;
+  outline: none;
+}
+
+.view-history-button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.5);
+}
+
 </style>
