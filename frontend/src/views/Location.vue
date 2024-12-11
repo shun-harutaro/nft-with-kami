@@ -43,6 +43,7 @@
       <h2>選択した神社</h2>
       <p><strong>名前:</strong> {{ selectedShrine.name }}</p>
       <p><strong>住所:</strong> {{ selectedShrine.address }}</p>
+      <button class="select-button" @click="navigateToGodcome">選択する</button>
     </div>
     <!-- ローディング中やエラー表示 -->
     <div v-if="loading" class="loading">ロード中...</div>
@@ -111,6 +112,9 @@ export default {
     },
     selectShrine(shrine) {
       this.selectedShrine = shrine;
+    },
+    navigateToGodcome() {
+      this.$router.push({ path: "./Godcome", query: { shrine: this.selectedShrine.name } });
     },
   },
 };
@@ -216,10 +220,10 @@ export default {
 .selected-shrine {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 2px solid #000000; /* 黒の枠を追加 */
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.9);
-  text-align: left;
+  text-align: center;
 }
 
 .selected-shrine h2 {
@@ -230,6 +234,23 @@ export default {
 .selected-shrine p {
   font-size: 3.5vw;
   margin: 5px 0;
+}
+
+.select-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 3.5vw;
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000; /* 黒の枠を追加 */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.select-button:hover {
+  background-color: #0056b3;
 }
 
 /* エラーおよび空リストメッセージ */
