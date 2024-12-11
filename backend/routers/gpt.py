@@ -7,8 +7,9 @@ router = APIRouter()
 
 shrine_info_assistant_id = "asst_kgJXT7sfAUzE63bTR5xaUunF"
 talking_assistant_id = "asst_rcojtjjiQ0RoEeZOjEVlUrTC"
-omikuji_assistant_id = "asst_xAmc0FdDzbN6hKbtCGDApj40"
 summary_text_assistant_id = "asst_LR1KFOmiE7o3sB3cNs3EwQY5"
+omikuji_assistant_id = "asst_xAmc0FdDzbN6hKbtCGDApj40"
+
 
 @router.post(
     "/gpt",
@@ -67,6 +68,16 @@ async def gpt(thread_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+@router.post(
+    "/gpt/omikuji",
+    tags=[],
+    summary="chatGPTによる文章生成",
+)
+async def gpt(text: str, thread_id: str):
+    try:
+        generated_text: str = await generate_text(text, thread_id, omikuji_assistant_id)
+        return {"text": generated_text, "thread_id": thread_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
