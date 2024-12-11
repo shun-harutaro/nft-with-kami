@@ -4,16 +4,22 @@
     <div class="background-container">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/857f846126a086104345dd3eb693dd2974c0f03dad83d569ba56dbca3c2cd40a?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/0d729f22bd7e6bb23fc6db25a2cc4ebfddb2b47f887454b80c7af3547b1a528b?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
         class="background-image"
-        alt="Shrine selection background"
+        alt=""
+      />
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/03f63f5fe13b4cb994f7f82af912ed64800f4fba07839ebe49c033b475648fea?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        class="overlay-image"
+        alt=""
       />
     </div>
     <!-- ヘッダー部分 -->
     <div class="header-section">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c7570a0aa448614fd8f56816de33018bbd42534a73ed20ac0749d9aaa30e1648?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b95892b3951b0003a4c0d822d4b5134c129fe5384c8871f00ae582e9f943433?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
         class="header-image"
         alt="Header decoration"
       />
@@ -143,10 +149,14 @@ export default {
   overflow: hidden;
 }
 
-.background-image {
-  width: 100%;
+.background-image,
+.overlay-image {
+  position: absolute;
+  inset: 0;
   height: 100%;
+  width: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 /* ヘッダー部分 */
