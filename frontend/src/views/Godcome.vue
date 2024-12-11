@@ -1,3 +1,9 @@
+<script setup>
+const fetchShrine = () => {
+  /* TODO 実装 */
+}
+</script>
+
 <template>
     <section class="hero-section" role="banner">
       <img
@@ -14,15 +20,7 @@
       />
     </section>
   </template>
-  
-  <script lang="ts">
-  import { defineComponent } from 'vue'
-  
-  export default defineComponent({
-    name: 'HeroImages'
-  })
-  </script>
-  
+
   <style scoped>
   .hero-section {
     display: flex;
@@ -32,7 +30,7 @@
     width: 100%;
     padding: 311px 0 0;
   }
-  
+
   .hero-background {
     position: absolute;
     inset: 0;
@@ -41,19 +39,19 @@
     object-fit: cover;
     object-position: center;
   }
-  
+
   .hero-foreground {
     aspect-ratio: 0.73;
     object-fit: contain;
     object-position: center;
     width: 100%;
     z-index: 10;
-  
+
     /* フェードアニメーション */
     opacity: 0;
     animation: fadeIn 2s ease-in forwards;
   }
-  
+
   /* アニメーション定義 */
   @keyframes fadeIn {
     from {
@@ -63,7 +61,7 @@
       opacity: 1;
     }
   }
-  
+
   .visually-hidden {
     position: absolute;
     width: 1px;
@@ -76,4 +74,3 @@
     border: 0;
   }
   </style>
-  
