@@ -7,7 +7,6 @@ import User from "./views/User.vue"
 const routes = [
   { path: "/", component: Login },
   { path: "/location", component: Location },
-  { path: "/user", component: User },
 ]
 
 const router = createRouter({
