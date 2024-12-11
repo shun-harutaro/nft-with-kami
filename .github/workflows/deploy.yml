@@ -28,4 +28,4 @@ jobs:
           docker buildx build --platform linux/amd64,linux/arm64 \
             -f ./backend/Dockerfile \
             -t ${{ vars.LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }} \
-            --push .
+            --push ./backend
