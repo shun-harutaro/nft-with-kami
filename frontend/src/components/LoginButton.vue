@@ -1,6 +1,6 @@
 <template>
   <button @click="handleLogin">
-    <img src="@/assets/btn_login_base.png" alt="LINEでログイン" />
+    <img src="@/assets/img/btn_login_base.png" alt="LINEでログイン" />
   </button>
 </template>
 

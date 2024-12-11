@@ -29,21 +29,21 @@ const handleLogout = () => {
 <!--神社-->
 <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/03f63f5fe13b4cb994f7f82af912ed64800f4fba07839ebe49c033b475648fea?placeholderIfAbsent=true&apiKey=b0ba032ba04c496389e8dea963537aea"
+        src="@/assets/img/background-shrine-alpha.png"
         class="gallery-background"
         alt=""
       />
 <!--NFTwith神-->
 <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/746a97cb32fcc0e663949dd8a4e00662dd6fb2957f4ffb8fcbbd6411133003e9?placeholderIfAbsent=true&apiKey=b0ba032ba04c496389e8dea963537aea"
+        src="@/assets/img/nft-with-kami-logo.png"
         class="gallery-header"
         alt="Gallery Header"
       />
 <!--太陽モワモワ-->
 <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/d58f3000989a01d360aa6b718bf2a1da619b65250a41c5c91f8d6192282d4246?placeholderIfAbsent=true&apiKey=b0ba032ba04c496389e8dea963537aea"
+        src="@/assets/img/shimenawa.png"
         class="gallery-content"
         alt="Gallery Content"
       />
