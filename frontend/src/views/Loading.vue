@@ -8,7 +8,14 @@
           alt=""
         />
         <div class="generation-status">おみくじ生成中！</div>
-        <div class="kamisama-container"></div>
+        <div class="kamisama-container">
+          <img
+            loading="lazy"
+            src="@/assets/img/god.png"
+            class="hero-foreground"
+            alt=""
+          />
+        </div>
       </div>
     </div>
   </template>
@@ -53,10 +60,22 @@
   }
   
   .kamisama-container {
-    position: relative;
-    display: flex;
-    min-height: 737px;
-    margin-top: 25px;
+    aspect-ratio: 0.73;
+    object-fit: contain;
+    object-position: center;
     width: 100%;
+    z-index: 10;
+  }
+
+  .hero-foreground {
+    aspect-ratio: 0.73;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    z-index: 20;
+    position: absolute; /* 神様を自由に配置するためにabsoluteを指定 */
+    bottom: 10px; /* 下に配置 */
+    left: 0;
+    right: 0;
   }
   </style>
