@@ -8,8 +8,10 @@ from services.nft_service import (
     upload_metadata_to_pinata,
     mint_nft,
     get_metadata_from_transaction,
-    create_metadata
+    create_metadata,
+    generate_name_with_user
 )
+from services.line import get_user_id_from_cookie
 from utils.config import (
     get_nft_private_key
 )
@@ -24,23 +26,17 @@ router = APIRouter()
     summary="画像のアップロードとNFTの発行",
 )
 async def mint(upload_file: UploadFile):
-    # Pinataに画像をアップロードしてURLを取得
     image_url = await upload_image_to_pinata(upload_file)
-    # メタデータの作成
-    nft_metadata = create_metadata(filename=upload_file.filename,image_url=image_url)
+    nft_name = generate_name_with_user(get_user_id_from_cookie())
+    nft_metadata = create_metadata(nft_name=nft_name,user_id=get_user_id_from_cookie(),image_url=image_url)
     metadata_url = upload_metadata_to_pinata(nft_metadata)
-    # NFTをブロックチェーンにミント
     tx_receipt = mint_nft(metadata_url,NFT_PRIVATE_KEY)
-    # トランザクションハッシュを取得
     tx_hash = tx_receipt.transactionHash.hex()
-    # イベントログからトークンIDを取得
     try:
         token_id_hex = tx_receipt.logs[0]["topics"][3]  # トークンIDのHexBytes
         token_id = int(token_id_hex.hex(), 16)  # 16進数を整数に変換
     except (KeyError, IndexError) as e:
         raise HTTPException(status_code=500, detail=f"Failed to retrieve token ID: {str(e)}")
-
-
     response_data = {
         "name": nft_metadata.name,
         "description": nft_metadata.description,
@@ -49,8 +45,6 @@ async def mint(upload_file: UploadFile):
         "transactionHash": tx_hash,
         "tokenId": token_id
     }
-
-    #メタデータと取引情報を返す
     return response_data
 
 @router.get(

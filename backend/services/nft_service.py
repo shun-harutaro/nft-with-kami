@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 import requests
 import json
 import os
+from datetime import datetime
 from web3 import Web3
 from schemas.nft_schema import NFTMetadata
 from utils.config import (
@@ -10,6 +11,9 @@ from utils.config import (
     get_pinata_secret_api_key,
     get_nft_private_key
 )
+
+
+
 
 PINATA_API_KEY=get_pinata_api_key()
 PINATA_SECRET_API_KEY=get_pinata_secret_api_key()
@@ -140,14 +144,18 @@ def get_balance():
     return {"balance": {balance}, 
             "currency": "POL"}
 
-def create_metadata(filename:str,image_url:str):
+def create_metadata(nft_name:str, user_id:str ,image_url:str):
     meta_data = nft_metadata = NFTMetadata(
-                    name=filename,
-                    description="2024年 NFT with 神により、生成されたおみくじです。",
+                    name=nft_name,
+                    description="2025年 NFT with 神により、生成されたおみくじです。",
                     image=image_url,
                     attributes=[
-                        {"trait_type": "Year", "value": "2024"},
-                        {"trait_type": "Grade", "value": "Super"},
+                        {"trait_type": "Year", "value": "2025"},
+                        {"trait_type": "Whose", "value": user_id},
                     ],
                 )
     return meta_data
+
+def generate_name_with_user(user_id: str) -> str:
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"NFT_{user_id}_{current_time}"
