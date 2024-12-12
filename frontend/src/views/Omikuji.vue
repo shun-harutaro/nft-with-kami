@@ -1,5 +1,37 @@
 <script setup>
 import { useRouter } from "vue-router";
+import axios from "axios"
+//アイコンの取得
+//const profile = await axios.get(`/api/users/me/profile`);
+//const picture=profile.picture
+const picture = "https://tyoudoii-illust.com/wp-content/uploads/2024/07/oksign_businessman_simple-300x282.png";
+//console.log(picture);
+
+const omikuziText = {
+  "運勢": "大吉",
+  "願望": "多くの思いを乗せ...",
+  "健康": "日々の生活リズムを整えれば...",
+  "金運": "自分の強みを活かして...",
+  "学問": "劇的に伸びる時期。集中して...",
+  "恋愛": "信じ合うことで距離に打ち勝て...",
+  "神託": "一輝よ、朝の目覚めを改善せずに新たな環境で暮らすと..."
+};
+const response = await axios.post(
+  '/api/omikuzi?shrine_name=拳母神社&icon_url=picture',
+  omikuziText, // ボディはOmikuziTextモデルに準拠したJSON
+  {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    responseType: 'blob' // 画像ファイルが返されるのでblobで受け取る
+  }
+);
+
+// response.dataには画像ファイル(Blob)が入ります
+
+
+
+
 
 const handleShare = () => {
   /* TODO: 実装 */
