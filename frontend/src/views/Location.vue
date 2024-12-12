@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import apiAxios from "@/plugin/axios";
+import axios from 'axios';
 
 // データのリアクティブ変数
 const shrines = ref([]); // 神社リスト
@@ -26,7 +26,7 @@ const getLocation = async () => {
         const longitude = position.coords.longitude;
 
         try {
-          const response = await apiAxios.get("/api/location", {
+          const response = await axios.get("/api/location", {
             params: { latitude, longitude },
           });
           if (response.data && response.data.shrines) {
