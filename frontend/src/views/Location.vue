@@ -142,7 +142,6 @@ onMounted(() => {
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  font-family: "Noto Serif JP", sans-serif;
   text-align: center;
 }
 
