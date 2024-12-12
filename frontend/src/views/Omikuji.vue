@@ -60,7 +60,6 @@ const handleReturn = () => {
   width: 100%;
   flex-direction: column;
   overflow: hidden;
-  font-family: Noto Serif JP, sans-serif;
   color: rgba(0, 0, 0, 1);
   font-weight: 400;
   text-align: center;

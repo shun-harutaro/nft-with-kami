@@ -41,7 +41,7 @@
   white-space: nowrap;
   text-align: center;
   margin: 0 auto;
-  font: 400 48px Noto Serif JP, sans-serif;
+  font: 400 48px;
 }
 
 .content-wrapper {
