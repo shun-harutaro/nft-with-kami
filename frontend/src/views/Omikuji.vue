@@ -1,47 +1,3 @@
-<script setup>
-import { useRouter } from "vue-router";
-import axios from "axios"
-//アイコンの取得
-//const profile = await axios.get(`/api/users/me/profile`);
-//const picture=profile.picture
-const picture = "https://tyoudoii-illust.com/wp-content/uploads/2024/07/oksign_businessman_simple-300x282.png";
-//console.log(picture);
-
-const omikuziText = {
-  "運勢": "大吉",
-  "願望": "多くの思いを乗せ...",
-  "健康": "日々の生活リズムを整えれば...",
-  "金運": "自分の強みを活かして...",
-  "学問": "劇的に伸びる時期。集中して...",
-  "恋愛": "信じ合うことで距離に打ち勝て...",
-  "神託": "一輝よ、朝の目覚めを改善せずに新たな環境で暮らすと..."
-};
-const response = await axios.post(
-  '/api/omikuzi?shrine_name=拳母神社&icon_url=picture',
-  omikuziText, // ボディはOmikuziTextモデルに準拠したJSON
-  {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    responseType: 'blob' // 画像ファイルが返されるのでblobで受け取る
-  }
-);
-
-// response.dataには画像ファイル(Blob)が入ります
-
-
-
-
-
-const handleShare = () => {
-  /* TODO: 実装 */
-}
-
-const handleReturn = () => {
-  router.push("/")
-}
-</script>
-
 <template>
   <div class="result-screen">
     <div class="result-container">
@@ -51,12 +7,14 @@ const handleReturn = () => {
         class="background-image"
         alt=""
       />
-      <div class="fortune-display"></div>
+      <div class="fortune-display">
+        <img v-if="blobUrl" :src="blobUrl" alt="Generated Omikuji" />
+      </div>
       <div class="share-section">
-        <button 
-	        class="share-button" 
-	        tabindex="0"
-	        @click="handleShare"
+        <button
+          class="share-button"
+          tabindex="0"
+          @click="handleShare"
           aria-label="おみくじをシェア">
           <span>おみくじをシェア</span>
         </button>
@@ -83,6 +41,56 @@ const handleReturn = () => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+
+const router = useRouter();
+
+const picture = "https://tyoudoii-illust.com/wp-content/uploads/2024/07/oksign_businessman_simple-300x282.png";
+
+const omikuziText = {
+  "運勢": "大吉",
+  "願望": "多くの思いを乗せ...",
+  "健康": "日々の生活リズムを整えれば...",
+  "金運": "自分の強みを活かして...",
+  "学問": "劇的に伸びる時期。集中して...",
+  "恋愛": "信じ合うことで距離に打ち勝て...",
+  "神託": "一輝よ、朝の目覚めを改善せずに新たな環境で暮らすと..."
+};
+
+// Blob URLを保持するref
+const blobUrl = ref(null);
+
+onMounted(async () => {
+  try {
+    const response = await axios.post(
+      `/api/omikuzi?shrine_name=${encodeURIComponent('拳母神社')}&icon_url=${encodeURIComponent(picture)}`,
+      omikuziText,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        responseType: 'blob'
+      }
+    );
+    // Blobデータを一時URLに変換
+    blobUrl.value = URL.createObjectURL(response.data);
+  } catch (error) {
+    console.error("おみくじ生成に失敗しました:", error);
+  }
+});
+
+const handleShare = () => {
+  // TODO: シェア機能実装
+};
+
+const handleReturn = () => {
+  router.push("/");
+};
+</script>
 
 <style scoped>
 .result-screen {
@@ -121,6 +129,15 @@ const handleReturn = () => {
   display: flex;
   min-height: 395px;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 画像サイズ調整 */
+.fortune-display img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .share-section {
@@ -188,5 +205,4 @@ const handleReturn = () => {
   font-size: 45px;
   text-align: center;
 }
-
 </style>

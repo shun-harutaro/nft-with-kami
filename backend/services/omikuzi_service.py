@@ -71,7 +71,7 @@ def generate_omikuzi(img_path, font_path, omikuzi_text, shrine_name, icon_url):
     temp_file = NamedTemporaryFile(delete=False, suffix=".png")
     img.save(temp_file.name)
     temp_file.close()
-
+    print(temp_file.name)
     return temp_file.name
 
 def load_image_from_url(url: str) -> Image.Image:
@@ -79,6 +79,7 @@ def load_image_from_url(url: str) -> Image.Image:
         response = requests.get(url, stream=True)
         response.raise_for_status() 
         image = Image.open(io.BytesIO(response.content))
+        print(image.filename)
         return image
     except requests.exceptions.RequestException as e:
         print(f"Failed to fetch image from URL: {e}")
