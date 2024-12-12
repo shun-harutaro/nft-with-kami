@@ -4,12 +4,13 @@ from urllib.parse import urlencode
 
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
-from utils.config import get_line_client_id, get_line_redirect_uri
+from utils.config import get_line_client_id, get_line_redirect_uri, get_frontend_base_uri
 from services.line import get_token
 
 router = APIRouter()
 CLIENT_ID = get_line_client_id()
 REDIRECT_URI = get_line_redirect_uri()
+FRONTEND_BASE_URI = get_frontend_base_uri()
 
 
 @router.get("/auth/login")
@@ -41,12 +42,12 @@ async def auth_callback(
     if not id_token:
         raise HTTPException(status_code=400, detail="ID token not found.")
 
-    response = RedirectResponse(url="/")
+    response = RedirectResponse(url=FRONTEND_BASE_URI)
     response.set_cookie(
         key="id_token",
         value=id_token,
         httponly=True,
-        #secure=True, # httpsでのみ
-        #samesite="none", # クロスオリジン対応
+        secure=True, # httpsでのみ
+        samesite="none", # クロスオリジン対応
     )
     return response

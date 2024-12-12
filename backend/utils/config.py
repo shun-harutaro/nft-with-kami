@@ -14,6 +14,7 @@ def check_env_variables():
         "PINATA_SECRET_API_KEY",
         "NFT_ACCOUNT_ADDRESS",
         "NFT_PRIVATE_KEY",
+        "FRONTEND_BASE_URI",
     ]
     missing_vars = [var for var in env_vars if os.getenv(var) is None]
     if missing_vars:
@@ -64,3 +65,7 @@ def get_nft_acount_address() -> str | None:
 
 def get_nft_private_key() -> str | None:
     return os.getenv("NFT_PRIVATE_KEY")
+
+
+def get_frontend_base_uri() -> str | None:
+    return os.getenv("FRONTEND_BASE_URI")
