@@ -1,19 +1,99 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from 'axios';
+
+// データのリアクティブ変数
+const shrines = ref([]); // 神社リスト
+const selectedShrine = ref(null); // 選択された神社
+const loading = ref(false); // ローディング状態
+const error = ref(null); // エラー情報
+
+// ルーターインスタンスの取得
+const router = useRouter();
+
+// 位置情報を取得する関数
+const getLocation = async () => {
+  if (navigator.geolocation) {
+    loading.value = true;
+    error.value = null;
+    shrines.value = [];
+    selectedShrine.value = null;
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        try {
+          const response = await axios.get("/api/location", {
+            params: { latitude, longitude },
+          });
+          if (response.data && response.data.shrines) {
+            shrines.value = response.data.shrines.map((shrine) => ({
+              name: shrine.name,
+              address: shrine.address,
+              distance: shrine.distance,
+            }));
+          } else {
+            error.value = "データの取得に失敗しました。";
+          }
+        } catch (err) {
+          error.value = "サーバーとの通信に失敗しました。";
+        } finally {
+          loading.value = false;
+        }
+      },
+      () => {
+        error.value = "位置情報の取得に失敗しました。";
+        loading.value = false;
+      }
+    );
+  } else {
+    error.value = "位置情報が利用できません。";
+  }
+};
+
+// 神社を選択する関数
+const selectShrine = (shrine) => {
+  selectedShrine.value = shrine;
+};
+
+// 特定のページへ遷移する関数
+const navigateToGodcome = () => {
+  if (selectedShrine.value) {
+    router.push({ path: "./Godcome", query: { shrine: selectedShrine.value.name } });
+  }
+};
+
+// コンポーネントがマウントされたときに位置情報を取得
+onMounted(() => {
+  getLocation();
+});
+</script>
+
 <template>
   <div class="shrine-selection">
     <!-- 全体の背景画像 -->
     <div class="background-container">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/857f846126a086104345dd3eb693dd2974c0f03dad83d569ba56dbca3c2cd40a?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/new_background.png"
         class="background-image"
-        alt="Shrine selection background"
+        alt=""
+      />
+      <img
+        loading="lazy"
+        src="@/assets/img/background-shrine-alpha.png"
+        class="overlay-image"
+        alt=""
       />
     </div>
     <!-- ヘッダー部分 -->
     <div class="header-section">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c7570a0aa448614fd8f56816de33018bbd42534a73ed20ac0749d9aaa30e1648?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/location-header.png"
         class="header-image"
         alt="Header decoration"
       />
@@ -54,72 +134,6 @@
   </div>
 </template>
 
-<script>
-import apiAxios from "@/plugin/axios";
-
-export default {
-  data() {
-    return {
-      shrines: [], // 神社リスト
-      selectedShrine: null, // 選択された神社
-      loading: false, // ローディング状態
-      error: null, // エラー情報
-    };
-  },
-  created() {
-    this.getLocation();
-  },
-  methods: {
-    async getLocation() {
-      if (navigator.geolocation) {
-        this.loading = true;
-        this.error = null;
-        this.shrines = [];
-        this.selectedShrine = null;
-
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            try {
-              const response = await apiAxios.get("/api/location", {
-                params: { latitude, longitude },
-              });
-              if (response.data && response.data.shrines) {
-                this.shrines = response.data.shrines.map((shrine) => ({
-                  name: shrine.name,
-                  address: shrine.address,
-                  distance: shrine.distance,
-                }));
-              } else {
-                this.error = "データの取得に失敗しました。";
-              }
-            } catch (err) {
-              this.error = "サーバーとの通信に失敗しました。";
-            } finally {
-              this.loading = false;
-            }
-          },
-          () => {
-            this.error = "位置情報の取得に失敗しました。";
-            this.loading = false;
-          }
-        );
-      } else {
-        this.error = "位置情報が利用できません。";
-      }
-    },
-    selectShrine(shrine) {
-      this.selectedShrine = shrine;
-    },
-    navigateToGodcome() {
-      this.$router.push({ path: "./Godcome", query: { shrine: this.selectedShrine.name } });
-    },
-  },
-};
-</script>
-
 <style scoped>
 /* 全体のスタイル */
 .shrine-selection {
@@ -128,7 +142,6 @@ export default {
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  font-family: "Noto Serif JP", sans-serif;
   text-align: center;
 }
 
@@ -143,10 +156,14 @@ export default {
   overflow: hidden;
 }
 
-.background-image {
-  width: 100%;
+.background-image,
+.overlay-image {
+  position: absolute;
+  inset: 0;
   height: 100%;
+  width: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 /* ヘッダー部分 */

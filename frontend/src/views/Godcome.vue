@@ -1,28 +1,26 @@
+<script setup>
+const fetchShrine = () => {
+  /* TODO 実装 */
+}
+</script>
+
 <template>
     <section class="hero-section" role="banner">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/b8833e92d60041df3d34310a25aeb4d201d4e6f79788d272269d52b0d9e34396?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/god-background.png"
         class="hero-background"
         alt=""
       />
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/2f30152d09a69c2f45d7242bd7d5781c50bed4f61caaec5b4944f0f2fcbec169?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/god.png"
         class="hero-foreground"
         alt=""
       />
     </section>
   </template>
-  
-  <script lang="ts">
-  import { defineComponent } from 'vue'
-  
-  export default defineComponent({
-    name: 'HeroImages'
-  })
-  </script>
-  
+
   <style scoped>
   .hero-section {
     display: flex;
@@ -32,7 +30,7 @@
     width: 100%;
     padding: 311px 0 0;
   }
-  
+
   .hero-background {
     position: absolute;
     inset: 0;
@@ -41,19 +39,19 @@
     object-fit: cover;
     object-position: center;
   }
-  
+
   .hero-foreground {
     aspect-ratio: 0.73;
     object-fit: contain;
     object-position: center;
     width: 100%;
     z-index: 10;
-  
+
     /* フェードアニメーション */
     opacity: 0;
     animation: fadeIn 2s ease-in forwards;
   }
-  
+
   /* アニメーション定義 */
   @keyframes fadeIn {
     from {
@@ -63,7 +61,7 @@
       opacity: 1;
     }
   }
-  
+
   .visually-hidden {
     position: absolute;
     width: 1px;
@@ -76,4 +74,3 @@
     border: 0;
   }
   </style>
-  

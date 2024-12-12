@@ -9,3 +9,16 @@
     padding: 0 2rem;
   }
 }
+
+@font-face {
+  font-family: "TamanegiKaisho"; /* フォント名 */
+  src: url('./fonts/tamanegikaisho.ttf') format('truetype'); /* 相対パスでフォントを指定 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* プロジェクト全体にフォントを適用 */
+body {
+  font-family: "TamanegiKaisho", sans-serif; /* カスタムフォントを適用 */
+}
+

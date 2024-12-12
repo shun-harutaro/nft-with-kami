@@ -12,6 +12,7 @@ ASSISTANT_ID = get_openai_assistant_id()
 THREAD_ID = get_openai_thread_id()
 
 
+
 def get_client() -> AsyncOpenAI:
     global client
     if client is None:
@@ -33,7 +34,7 @@ async def delete_thread_id(thread_id: str):
     await client.beta.threads.delete(thread_id)
 
 
-async def generate_text(prompt: str, thread_id: str = THREAD_ID) -> str:
+async def generate_text(prompt: str, thread_id: str = THREAD_ID, assistant_id: str = ASSISTANT_ID) -> str:
     client = get_client()
     await client.beta.threads.messages.create(
         thread_id=thread_id,
@@ -43,7 +44,7 @@ async def generate_text(prompt: str, thread_id: str = THREAD_ID) -> str:
 
     run = await client.beta.threads.runs.create_and_poll(
         thread_id=thread_id,
-        assistant_id=ASSISTANT_ID,
+        assistant_id = assistant_id,
     )
 
     messages = await client.beta.threads.messages.list(
@@ -63,3 +64,25 @@ async def generate_text(prompt: str, thread_id: str = THREAD_ID) -> str:
             citations.append(f"[{index}] {cited_file.filename}")
 
     return message_content.value
+
+async def chat_summary(thread_id):
+    client = get_client()
+    # スレッド内のメッセージを取得
+    thread_messages = await client.beta.threads.messages.list(thread_id)
+    
+    thread_messages.data.reverse()
+
+    # "role" が "user" のメッセージのみをフィルタリング
+    user_messages = [message for message in thread_messages.data if message.role == "user"]
+
+    # "content" のテキストを抽出
+    texts = [
+        message.content[0].text.value
+        for message in user_messages
+        if message.content and message.content[0].type == "text"
+    ]
+
+    # JSON形式で返却
+    return {"texts": texts}
+
+
