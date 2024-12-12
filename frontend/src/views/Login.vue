@@ -150,34 +150,35 @@ const handleClick = () => {
 
 .oracle-button {
   position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-45%, -45%);
+  top: 70%; /* 上から50% */
+  left: 50%; /* 左から50% */
+  transform: translate(-50%, -50%); /* 完全に中央に配置 */
   background-color: rgba(255, 69, 0, 1);
   border: none;
   border-radius: 50%;
   color: rgba(255, 255, 255, 1);
   cursor: pointer;
-  font: 400 50px 'Noto Serif JP', sans-serif;
   height: 200px; /* ボタンのサイズ */
   width: 200px;
   text-align: center;
-  transition: transform 0.2s ease;
+  font-size: 40px;
   z-index: 20; /* ボタンをしめ縄の後ろに配置 */
+  transition: background-color 0.2s ease; /* カラートランジションのみ適用 */
 }
 
 .oracle-button:hover,
 .oracle-button:focus {
-  outline: 3px solid rgba(255, 255, 255, 0.5);
-  transform: scale(1.02);
+  outline: 3px solid rgba(255, 255, 255, 0.5); /* カラー変更のみ */
+  transform: translate(-50%, -50%); /* ボタン位置を固定 */
 }
 
 .oracle-button:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.8);
+  outline: 3px solid rgba(255, 255, 255, 0.8); /* フォーカス時のアウトライン */
+  transform: translate(-50%, -50%); /* ボタン位置を固定 */
 }
 
 .oracle-button:active {
-  transform: scale(0.98);
+  transform: translate(-50%, -50%); /* アクティブ時も位置が固定 */
 }
 
 .view-history-button {
