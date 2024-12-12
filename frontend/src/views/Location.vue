@@ -4,13 +4,13 @@
     <div class="background-container">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/0d729f22bd7e6bb23fc6db25a2cc4ebfddb2b47f887454b80c7af3547b1a528b?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/new_background.png"
         class="background-image"
         alt=""
       />
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/03f63f5fe13b4cb994f7f82af912ed64800f4fba07839ebe49c033b475648fea?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/background-shrine-alpha.png"
         class="overlay-image"
         alt=""
       />
@@ -19,7 +19,7 @@
     <div class="header-section">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b95892b3951b0003a4c0d822d4b5134c129fe5384c8871f00ae582e9f943433?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/location-header.png"
         class="header-image"
         alt="Header decoration"
       />
