@@ -1,16 +1,9 @@
 from openai import AsyncOpenAI
 
-from utils.config import (
-    get_openai_api_key,
-    get_openai_assistant_id,
-    get_openai_thread_id,
-)
+from utils.config import get_openai_api_key
 
 client = None
 API_KEY = get_openai_api_key()
-ASSISTANT_ID = get_openai_assistant_id()
-THREAD_ID = get_openai_thread_id()
-
 
 
 def get_client() -> AsyncOpenAI:
@@ -34,7 +27,7 @@ async def delete_thread_id(thread_id: str):
     await client.beta.threads.delete(thread_id)
 
 
-async def generate_text(prompt: str, thread_id: str = THREAD_ID, assistant_id: str = ASSISTANT_ID) -> str:
+async def generate_text(prompt: str, thread_id: str, assistant_id: str) -> str:
     client = get_client()
     await client.beta.threads.messages.create(
         thread_id=thread_id,
@@ -69,7 +62,7 @@ async def chat_summary(thread_id):
     client = get_client()
     # スレッド内のメッセージを取得
     thread_messages = await client.beta.threads.messages.list(thread_id)
-    
+
     thread_messages.data.reverse()
 
     # "role" が "user" のメッセージのみをフィルタリング
