@@ -40,7 +40,7 @@ def get_user_id_from_cookie(id_token: str = Cookie(None)) -> str:
 
 def get_profile(id_token):
     decoded_token = decode_hs256(id_token, CLIENT_ID, CLIENT_SECRET)
-    return {"name": decoded_token["name"], "picture": decoded_token["picture"]}
+    return {"name": decoded_token["name"], "picture": decoded_token.get("picture","")}
 
 
 async def get_profile_by_endpoint(id_token):
