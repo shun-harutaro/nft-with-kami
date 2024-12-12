@@ -1,9 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-
-# from fastapi.middleware.cors import CORSMiddleware
-
-from routers import gpt, location, auth, nft, user
+from routers import gpt, location, auth, nft, user, omikuzi
+#from fastapi.middleware.cors import CORSMiddleware
 from utils.config import check_env_variables
 
 
@@ -19,6 +17,7 @@ app.include_router(location.router)
 app.include_router(gpt.router)
 app.include_router(auth.router)
 app.include_router(nft.router)
+app.include_router(omikuzi.router)
 app.include_router(user.router)
 
 
