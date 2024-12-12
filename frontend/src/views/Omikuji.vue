@@ -1,3 +1,15 @@
+<script setup>
+import { useRouter } from "vue-router";
+
+const handleShare = () => {
+  /* TODO: 実装 */
+}
+
+const handleReturn = () => {
+  router.push("/")
+}
+</script>
+
 <template>
   <div class="result-screen">
     <div class="share-container">
@@ -16,22 +28,6 @@
     </button>
   </div>
 </template>
-
-<script>
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'OmikujiResult',
-  methods: {
-    handleShare() {
-      // Share functionality implementation
-    },
-    handleReturn() {
-      this.$router.push('/');
-    },
-  },
-});
-</script>
 
 <style scoped>
 .result-screen {
