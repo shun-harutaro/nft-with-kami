@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from schemas.text import TextResponse
-from services.gpt import generate_text, create_new_thread_id, chat_summary
+from services.gpt import generate_text, create_new_thread_id, chat_summary, contains_omikuji_phrase
 
 router = APIRouter()
 
@@ -48,7 +48,8 @@ async def gpt(shrine: str):
 async def gpt(text: str, thread_id: str):
     try:
         generated_text: str = await generate_text(text, thread_id, talking_assistant_id)
-        return {"text": generated_text, "thread_id": thread_id}
+        end_point = contains_omikuji_phrase(generated_text)
+        return {"text": generated_text, "thread_id": thread_id, "end_point": end_point}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     

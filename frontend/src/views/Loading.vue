@@ -1,3 +1,68 @@
+<script>
+
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      threadId: "", // 初期化されたスレッドID
+    };
+  },
+  methods: {
+    async fetchSummaryAndOmikuji() {
+      try {
+        // 1. /gpt/chat-summary エンドポイントを呼び出し
+        console.log("Fetching chat summary with threadId:", this.threadId);
+        const summaryResponse = await axios.post(`/api/gpt/chat-summary?thread_id=${this.threadId}`);
+        const { text: summaryText, thread_id: updatedThreadId } = summaryResponse.data;
+
+        console.log("Chat summary fetched:", summaryText);
+
+        // 2. /gpt/omikuji エンドポイントを呼び出し
+        console.log("Fetching omikuji with summary text and updated threadId...");
+        const omikujiResponse = await axios.post(`/api/gpt/omikuji?text=${summaryText}&thread_id=${updatedThreadId}`);
+
+        const { text: omikujiText } = omikujiResponse.data;
+
+        console.log("Omikuji fetched:", omikujiText);
+
+        // 3. /Omikuji ページに遷移
+        console.log("Navigating to /Omikuji with omikuji text...");
+        this.$router.push({
+          path: "/Omikuji",
+          query: {
+            text: omikujiText,
+          },
+        });
+      } catch (error) {
+        console.error("Error during fetching or navigation:", error);
+        alert("エラーが発生しました。もう一度お試しください。");
+      }
+    },
+  },
+  mounted() {
+    // クエリパラメータから threadId を取得
+    const { threadId } = this.$route.query;
+
+    console.log(threadId)
+
+    if (!threadId) {
+      console.error("Missing threadId in query parameters.");
+      alert("スレッドIDが見つかりません。最初からやり直してください。");
+      return;
+    }
+
+    // スレッドIDを設定
+    this.threadId = threadId;
+
+    // フローを開始
+    this.fetchSummaryAndOmikuji();
+  },
+};
+
+
+</script>
+
 <template>
   <div class="omikuji-screen">
     <div class="content-wrapper">
