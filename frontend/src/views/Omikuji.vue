@@ -61,11 +61,11 @@ const omikuziText = {
   "神託": "一輝よ、朝の目覚めを改善せずに新たな環境で暮らすと..."
 };
 
-// Blob URLを保持するref
 const blobUrl = ref(null);
 
 onMounted(async () => {
   try {
+    // おみくじ画像生成リクエスト
     const response = await axios.post(
       `/api/omikuzi?shrine_name=${encodeURIComponent('拳母神社')}&icon_url=${encodeURIComponent(picture)}`,
       omikuziText,
@@ -73,13 +73,30 @@ onMounted(async () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        responseType: 'blob'
+        responseType: 'blob' // 画像をblobで受け取る
       }
     );
-    // Blobデータを一時URLに変換
+    // 生成された画像を表示
     blobUrl.value = URL.createObjectURL(response.data);
+
+    // NFTメタデータ取得用のリクエスト
+    // NFTエンドポイントでファイルアップロードが必要な場合の例
+    const formData = new FormData();
+    formData.append("upload_file", response.data, "omikuzi.png");
+
+    const metadataResponse = await axios.post(
+      `/api/nft`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+
+    console.log("NFT Token ID:", metadataResponse.data.tokenId);
   } catch (error) {
-    console.error("おみくじ生成に失敗しました:", error);
+    console.error("エラーが発生しました:", error);
   }
 });
 
@@ -133,7 +150,6 @@ const handleReturn = () => {
   align-items: center;
 }
 
-/* 画像サイズ調整 */
 .fortune-display img {
   max-width: 100%;
   height: auto;
