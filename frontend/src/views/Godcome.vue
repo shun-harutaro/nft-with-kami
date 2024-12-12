@@ -8,13 +8,13 @@ const fetchShrine = () => {
     <section class="hero-section" role="banner">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/b8833e92d60041df3d34310a25aeb4d201d4e6f79788d272269d52b0d9e34396?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/god-background.png"
         class="hero-background"
         alt=""
       />
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/2f30152d09a69c2f45d7242bd7d5781c50bed4f61caaec5b4944f0f2fcbec169?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
+        src="@/assets/img/god.png"
         class="hero-foreground"
         alt=""
       />
