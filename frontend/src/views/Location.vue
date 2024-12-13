@@ -184,7 +184,7 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(24px, 8vw, 64px); /* 動的フォントサイズ */
+  font-size: 35px!important;
   font-weight: bold;
   color: #fff;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
