@@ -72,38 +72,12 @@ const blobUrl = ref(null);
 
 onMounted(async () => {
   try {
-    // おみくじ画像生成リクエスト
-    const response = await axios.post(
-      `/api/omikuzi?shrine_name=${encodeURIComponent('拳母神社')}&icon_url=${encodeURIComponent(picture)}`,
-      omikuziText,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        responseType: 'blob' // 画像をblobで受け取る
-      }
-    );
-    // 生成された画像を表示
-    blobUrl.value = URL.createObjectURL(response.data);
+    const{text,photo,tokenId,transactionHash}=this.$route.query;
+    const blobUrl=photo;
+    document.getElementById("var1").textContent = tokenId;
+    document.getElementById("var2").textContent = transactionHash;
 
-    // NFTメタデータ取得用のリクエスト
-    // NFTエンドポイントでファイルアップロードが必要な場合の例
-    const formData = new FormData();
-    formData.append("upload_file", response.data, "omikuzi.png");
-
-    const metadataResponse = await axios.post(
-      `/api/nft`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-    );
-    document.getElementById("var1").textContent = metadataResponse.data.tokenId;
-    document.getElementById("var2").textContent = metadataResponse.data.transactionHash;
-
-    console.log("NFT Token ID:", metadataResponse.data.tokenId);
+    console.log("NFT Token ID:", tokenId);
   } catch (error) {
     console.error("エラーが発生しました:", error);
   }
