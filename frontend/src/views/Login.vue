@@ -1,3 +1,45 @@
+<script setup>
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useUserProfileStore } from "@/stores/userProfileStore";
+import LoginButton from "@/components/LoginButton.vue";
+import axios from "axios";
+
+const router = useRouter();
+const userStore = useUserProfileStore();
+
+// ログイン状態とユーザー情報を取得
+const isLoggedIn = computed(() => userStore.isLoggedIn);
+const displayName = computed(() => userStore.displayName);
+const profileImageUrl = computed(() => userStore.profileImageUrl);
+
+// 初期化処理: コンポーネントのマウント時にプロフィールを取得
+onMounted(async () => {
+  await userStore.fetchUserProfile();
+  if (userStore.isLoggedIn) {
+    try {
+      const response = await axios.get(`/api/users/me`);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        const postResponse = await axios.post("/api/users");
+      } else {
+        console.error("エラーが発生しました:", error);
+      }
+    }
+  }
+});
+
+// ボタンクリック時の処理
+const handleClick = () => {
+  router.push("/location");
+};
+
+const viewHistory = () => {
+  router.push("/ichiran");
+};
+</script>
+
+
 <template>
   <div class="gallery-container">
     <div class="gallery-wrapper">
@@ -42,47 +84,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useUserProfileStore } from "@/stores/userProfileStore";
-import LoginButton from "@/components/LoginButton.vue";
-import axios from "axios";
-
-const router = useRouter();
-const userStore = useUserProfileStore();
-
-// ログイン状態とユーザー情報を取得
-const isLoggedIn = computed(() => userStore.isLoggedIn);
-const displayName = computed(() => userStore.displayName);
-const profileImageUrl = computed(() => userStore.profileImageUrl);
-
-// 初期化処理: コンポーネントのマウント時にプロフィールを取得
-onMounted(async () => {
-  await userStore.fetchUserProfile();
-  if (userStore.isLoggedIn) {
-    try {
-      const response = await axios.get(`/api/users/me`);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        const postResponse = await axios.post("/api/users");
-      } else {
-        console.error("エラーが発生しました:", error);
-      }
-    }
-  }
-});
-
-// ボタンクリック時の処理
-const handleClick = () => {
-  router.push("/location");
-};
-
-const viewHistory = () => {
-  router.push("/ichiran");
-};
-</script>
 
 <style scoped>
 .gallery-container {
