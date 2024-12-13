@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from routers import gpt, location, auth, nft, user, omikuzi
+from routers import gpt, location, auth, nft, user, omikuzi, nft_database
 from fastapi.middleware.cors import CORSMiddleware
 from utils.config import check_env_variables
 
@@ -19,7 +19,7 @@ app.include_router(auth.router)
 app.include_router(nft.router)
 app.include_router(omikuzi.router)
 app.include_router(user.router)
-
+app.include_router(nft_database.router)
 
 origins = [
     "https://nft-with-kami.web.app"
