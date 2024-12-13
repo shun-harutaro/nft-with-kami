@@ -242,15 +242,20 @@ onMounted(() => {
   background-color: rgba(255, 255, 255, 0.9); /* 背景を半透明に */
   text-align: center;
   position: relative; /* z-indexを設定するためにpositionを追加 */
+  z-index: 1000; /* 他の要素よりも高い値を設定 */
+  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
+/* タイトルと詳細の文字要素 */
 .selected-shrine h2,
 .selected-shrine p {
   position: relative; /* z-indexを指定できるように設定 */
-  z-index: 15; /* 背景よりも文字を前面に表示 */
+  z-index: 1001; /* 親要素よりもさらに前面に表示 */
   font-size: 4vw;
   font-weight: bold;
+  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
+
 
 .select-button {
   margin-top: 10px;
