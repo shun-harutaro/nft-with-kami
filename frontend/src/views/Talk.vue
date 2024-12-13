@@ -240,15 +240,28 @@ export default {
 
 /* 吹き出し */
 .bubble {
+  position: relative; /* z-index を有効にするために必要 */
+  z-index: 10; /* 背景や他の要素よりも前面に表示 */
   max-width: 70%;
   padding: 10px;
   border-radius: 15px;
   background-color: #dcf8c6;
   word-wrap: break-word;
+  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 .message.received .bubble {
   background-color: #fff;
   border: 1px solid #ddd;
+  z-index: 10; /* 吹き出しを前面に */
+  transform: translateZ(0); /* Safariでの再描画を強制 */
+}
+
+/* 吹き出し内のテキストをさらに前面に */
+.bubble::before,
+.bubble::after {
+  position: relative;
+  z-index: 11; /* 吹き出し内の文字をさらに前面に */
+  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
 /* 入力エリア */
