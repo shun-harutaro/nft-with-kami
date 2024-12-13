@@ -9,31 +9,62 @@ export default {
     };
   },
   methods: {
+    // 1. /gpt/chat-summary エンドポイントを呼び出す関数
+    async fetchChatSummary() {
+      console.log("Fetching chat summary with threadId:", this.threadId);
+      const response = await axios.post(`/api/gpt/chat-summary?thread_id=${this.threadId}`);
+      const { text: summaryText, thread_id: updatedThreadId } = response.data;
+
+      console.log("Chat summary fetched:", summaryText);
+      return { summaryText, updatedThreadId };
+    },
+
+    // 2. /gpt/omikuji エンドポイントを呼び出す関数
+    async fetchOmikuji(summaryText, updatedThreadId) {
+      console.log("Fetching omikuji with summary text and updated threadId...");
+      const response = await axios.post(`/api/gpt/omikuji?text=${summaryText}&thread_id=${updatedThreadId}`);
+      const { text: omikujiText } = response.data;
+
+      console.log("Omikuji fetched:", omikujiText);
+      return omikujiText;
+    },
+
+    // 3. /gpt/json json形式に変える、神社情報取得
+    async fetchJsonCreate(summaryText, updatedThreadId) {
+      console.log("Json形式に変更します");
+      const response = await axios.post(`/api/gpt/json?text=${summaryText}&thread_id=${updatedThreadId}`);
+      const { text: omikujiText_json, shrineName: shrineName } = response.data;
+
+      console.log("Omikuji fetched:", omikujiText_json);
+      console.log("Omikuji Shrine:", shrineName)
+      return omikujiText_json, shrineName;
+    },
+
+    // 3. /Omikuji ページに遷移する関数
+    navigateToOmikujiPage(omikujiText) {
+      console.log("Navigating to /Omikuji with omikuji text...");
+      this.$router.push({
+        path: "/Omikuji",
+        query: {
+          text: omikujiText,
+        },
+      });
+    },
+
+    // メインフローを実行する関数
     async fetchSummaryAndOmikuji() {
       try {
-        // 1. /gpt/chat-summary エンドポイントを呼び出し
-        console.log("Fetching chat summary with threadId:", this.threadId);
-        const summaryResponse = await axios.post(`/api/gpt/chat-summary?thread_id=${this.threadId}`);
-        const { text: summaryText, thread_id: updatedThreadId } = summaryResponse.data;
+        // Step 1: Chat summary を取得
+        const { summaryText, updatedThreadId } = await this.fetchChatSummary();
 
-        console.log("Chat summary fetched:", summaryText);
+        // Step 2: Omikuji を取得
+        const omikujiText = await this.fetchOmikuji(summaryText, updatedThreadId);
 
-        // 2. /gpt/omikuji エンドポイントを呼び出し
-        console.log("Fetching omikuji with summary text and updated threadId...");
-        const omikujiResponse = await axios.post(`/api/gpt/omikuji?text=${summaryText}&thread_id=${updatedThreadId}`);
+        // Step 3: jsonに変更
+        const { text: omikujiText_json, shrineName: shrineName } = await this.fetchJsonCreate(summaryText, updatedThreadId);
 
-        const { text: omikujiText } = omikujiResponse.data;
-
-        console.log("Omikuji fetched:", omikujiText);
-
-        // 3. /Omikuji ページに遷移
-        console.log("Navigating to /Omikuji with omikuji text...");
-        this.$router.push({
-          path: "/Omikuji",
-          query: {
-            text: omikujiText,
-          },
-        });
+        // Step 3: Omikuji ページに遷移
+        this.navigateToOmikujiPage(omikujiText);
       } catch (error) {
         console.error("Error during fetching or navigation:", error);
         alert("エラーが発生しました。もう一度お試しください。");
@@ -44,7 +75,7 @@ export default {
     // クエリパラメータから threadId を取得
     const { threadId } = this.$route.query;
 
-    console.log(threadId)
+    console.log(threadId);
 
     if (!threadId) {
       console.error("Missing threadId in query parameters.");
@@ -59,6 +90,7 @@ export default {
     this.fetchSummaryAndOmikuji();
   },
 };
+
 
 
 </script>

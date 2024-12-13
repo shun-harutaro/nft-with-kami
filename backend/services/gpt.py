@@ -91,4 +91,29 @@ async def chat_summary(thread_id):
     # JSON形式で返却
     return {"texts": texts}
 
+async def get_shrineName_inthread(thread_id):
+    client = get_client()
+
+    # スレッド内の全てのメッセージを取得
+    response = await client.beta.threads.messages.list(thread_id, limit = 100)
+
+    # レスポンスの確認
+    if not response or not response.data:
+        return {"text": None}  # メッセージが取得できない場合
+
+    # メッセージを時系列順に並べ替え
+    thread_messages = response.data[::-1]
+
+    # 最初の "role" が "user" のメッセージを探す
+    for message in thread_messages:
+        if message.role == "user" and message.content:
+            if isinstance(message.content, list) and message.content and message.content[0].type == "text":
+                # "~神社" のような最初の会話内容を返す
+                return message.content[0].text.value
+
+    # 該当するメッセージが見つからない場合
+    return {"text": None}
+
+
+
 
