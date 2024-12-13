@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from schemas.text import TextResponse
-from services.gpt import generate_text, create_new_thread_id, chat_summary
+from services.gpt import generate_text, create_new_thread_id, chat_summary, contains_omikuji_phrase
 
 router = APIRouter()
 
@@ -12,22 +12,9 @@ omikuji_assistant_id = "asst_xAmc0FdDzbN6hKbtCGDApj40"
 
 
 @router.post(
-    "/gpt",
-    tags=[],
-    summary="chatGPTによる文章生成",
-    response_model=TextResponse,
-)
-async def gpt(text: str) -> TextResponse:
-    try:
-        generated_text: str = await generate_text(text)
-        return TextResponse(text=generated_text)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post(
     "/gpt/shrine-info",
-    tags=[],
-    summary="chatGPTによる文章生成",
+    tags=["gpt"],
+    summary="ChatGPTによる神社取得",
 )
 async def gpt(shrine: str):
     try:
@@ -39,24 +26,25 @@ async def gpt(shrine: str):
         return {"text": generated_text, "thread_id": thread_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @router.post(
     "/gpt/talking",
-    tags=[],
-    summary="chatGPTによる文章生成",
+    tags=["gpt"],
+    summary="ChatGPTとの対話",
 )
 async def gpt(text: str, thread_id: str):
     try:
         generated_text: str = await generate_text(text, thread_id, talking_assistant_id)
-        return {"text": generated_text, "thread_id": thread_id}
+        end_point = contains_omikuji_phrase(generated_text)
+        return {"text": generated_text, "thread_id": thread_id, "end_point": end_point}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 
 @router.post(
     "/gpt/chat-summary",
-    tags=[],
-    summary="chatGPTによる文章生成",
+    tags=["gpt"],
+    summary="ChatGPTによる文章生成",
 )
 async def gpt(thread_id: str):
     try:
@@ -70,8 +58,8 @@ async def gpt(thread_id: str):
 
 @router.post(
     "/gpt/omikuji",
-    tags=[],
-    summary="chatGPTによる文章生成",
+    tags=["gpt"],
+    summary="ChatGPTによる文章生成",
 )
 async def gpt(text: str, thread_id: str):
     try:
