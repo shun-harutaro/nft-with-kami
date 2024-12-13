@@ -25,7 +25,7 @@ async def get_nft(
 
 
 @router.post(
-    "/nft",
+    "/nfttest",
     tags=["NFT"],
     summary="NFTをデータベースに追加する",
     response_model=Nft,
@@ -39,7 +39,7 @@ async def create_nft_endpoint(
     existing_nft = await nft_crud.get_nft(db, nft_id)
     if existing_nft:
         raise HTTPException(status_code=400, detail="Nft already exists")
-    nft = Nft(nft_id=nft_id,user_id=user_id)
+    nft = Nft(id=nft_id, user_id=user_id)
     return await nft_crud.create_nft(db, nft)
 
 

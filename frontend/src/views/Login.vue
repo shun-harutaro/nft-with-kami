@@ -2,11 +2,10 @@
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserProfileStore } from "@/stores/userProfileStore";
-import LoginButton from "@/components/LoginButton.vue"
+import LoginButton from "@/components/LoginButton.vue";
+import axios from "axios";
 
 const router = useRouter();
-
-// ストアのインスタンスを取得
 const userStore = useUserProfileStore();
 
 // ログイン状態とユーザー情報を取得
@@ -19,14 +18,25 @@ onMounted(() => {
   userStore.fetchUserProfile();
 });
 
-const viewHistory = () => {
-  /* TODO: 実装 */
-}
+// ユーザー登録を行う関数
+const registerUser = async () => {
+  try {
+    const response = await axios.post("/api/users");
+    console.log("ユーザー登録成功:", response.data);
+    alert("ユーザーが正常に登録されました");
+  } catch (error) {
+    console.error("ユーザー登録エラー:", error);
+    alert("ユーザー登録中にエラーが発生しました");
+  }
+};
 
-const handleClick = () => {
-  router.push("/location")
-}
+// ボタンクリック時の処理
+const handleClick = async () => {
+  await registerUser();
+  router.push("/location");
+};
 </script>
+
 
 
 <template>
