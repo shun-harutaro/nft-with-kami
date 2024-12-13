@@ -243,6 +243,7 @@ onMounted(() => {
   position: relative; /* z-indexを設定するためにpositionを追加 */
   z-index: 1000; /* 他の要素よりも高い値を設定 */
   transform: translateZ(0); /* Safariでの再描画を強制 */
+  color: #000000;
 }
 
 /* タイトルと詳細の文字要素 */
