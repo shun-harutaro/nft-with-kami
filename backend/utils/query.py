@@ -3,14 +3,17 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.nft import Nft
 from services.nft_service import get_metadata_from_transaction
+from fastapi import APIRouter, HTTPException
 
 
 async def get_nfts_image_and_time_by_user_id(db: AsyncSession, user_id: str) -> List[Dict[str, str]]:
     query = select(Nft.id, Nft.created_at).where(Nft.user_id == user_id)
     result = await db.execute(query)
-
+    rows = result.fetchall()
+    if not rows:
+        raise HTTPException(status_code=404, detail="No NFTs found for the given user ID")
     nft_data = []
-    for row in result.fetchall():
+    for row in rows:
         nft_id, created_at = row[0], row[1]
         try:
             metadata = get_metadata_from_transaction(nft_id)
