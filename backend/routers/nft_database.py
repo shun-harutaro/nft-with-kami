@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/nft/",
+    "/nft",
     tags=["NFT"],
     summary="nft-idの取得",
     response_model=Nft,
