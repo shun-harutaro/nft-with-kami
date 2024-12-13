@@ -39,6 +39,7 @@
         <div class="bubble">{{ message.text }}</div>
       </div>
     </div>
+    <button>デバッグ</button>
     <div class="input-area">
       <input v-model="newMessage" placeholder="メッセージを入力" />
       <button @click="sendMessage" class="send-button"></button>

@@ -1,6 +1,10 @@
 <script>
 
 import axios from 'axios';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { computed } from "vue";
+import { useUserProfileStore } from "@/stores/userProfileStore";
 
 export default {
   data() {
@@ -39,14 +43,59 @@ export default {
       console.log("Omikuji Shrine:", shrineName)
       return omikujiText_json, shrineName;
     },
+    
+    //4. おみくじの生成とメタデータの取得
+    async fetchJsonCreate(omikujiText_json, shrineName) {
+         //LINEアイコン取得
+        const userProfileStore = useUserProfileStore();
+        const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
+        console.log(profileImageUrl.value);
 
-    // 3. /Omikuji ページに遷移する関数
-    navigateToOmikujiPage(omikujiText) {
+        // おみくじ画像生成リクエスト
+        const blobUrl = ref(null);
+        console.log("2");
+        const response = await axios.post(
+          `/api/omikuzi?shrine_name=${encodeURIComponent(shrineName)}&icon_url=${encodeURIComponent(profileImageUrl.value)}`,
+            omikujiText_json,
+          {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+            responseType: 'blob' // 画像をblobで受け取る
+          }
+        );
+        console.log("3");
+        console.log("ここまでできてるよ");
+
+
+
+      // NFTメタデータ取得用のリクエスト
+      // NFTエンドポイントでファイルアップロードが必要な場合の例
+      const formData = new FormData();
+      formData.append("upload_file", response.data, "omikuzi.png");
+
+      const metadataResponse = await axios.post(
+        `/api/nft`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );  
+      console.log("NFT Token ID:", metadataResponse.data.tokenId);
+      return metadataResponse.image,metadataResponse.data.tokenId,metadataResponse.data.transactionHash;
+    },
+
+    // . /Omikuji ページに遷移する関数
+    navigateToOmikujiPage(photo, tokenId, transactionHash) {
       console.log("Navigating to /Omikuji with omikuji text...");
       this.$router.push({
         path: "/Omikuji",
         query: {
-          text: omikujiText,
+          photo: metadataResponse.image,
+          tokenId: metadataResponse.data.tokenId,
+          transactionHash: metadataResponse.data.transactionHash
         },
       });
     },
@@ -65,6 +114,7 @@ export default {
 
         // Step 3: Omikuji ページに遷移
         this.navigateToOmikujiPage(omikujiText);
+
       } catch (error) {
         console.error("Error during fetching or navigation:", error);
         alert("エラーが発生しました。もう一度お試しください。");
@@ -98,6 +148,7 @@ export default {
 <template>
   <div class="omikuji-screen">
     <div class="content-wrapper">
+      <img id="icon">
       <img
         loading="lazy"
         src="@/assets/img/god-background.png"
