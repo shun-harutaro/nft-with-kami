@@ -77,7 +77,7 @@ async def get_nft_metadata(tx_hash: str):
         raise e
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error occurred: {str(e)}")
+            status_code=404, detail="User not found")
 
 
 @router.get(
@@ -91,7 +91,7 @@ async def balance():
         return balance
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error occurred: {str(e)}")
+            status_code=404, detail="NFT account not found")
 
 
 @router.get(
