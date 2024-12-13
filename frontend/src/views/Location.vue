@@ -239,18 +239,18 @@ onMounted(() => {
   padding: 10px;
   border: 2px solid #000000; /* 黒の枠を追加 */
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9); /* 背景を半透明に */
   text-align: center;
+  position: relative; /* z-indexを設定するためにpositionを追加 */
+  z-index: 10; /* 他の要素より前面に */
 }
 
-.selected-shrine h2 {
+.selected-shrine h2,
+.selected-shrine p {
+  position: relative; /* z-indexを指定できるように設定 */
+  z-index: 15; /* 背景よりも文字を前面に表示 */
   font-size: 4vw;
   font-weight: bold;
-}
-
-.selected-shrine p {
-  font-size: 3.5vw;
-  margin: 5px 0;
 }
 
 .select-button {
@@ -263,11 +263,9 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  position: relative; /* z-indexを指定できるように設定 */
+  z-index: 15; /* 背景よりも前面に表示 */
   text-align: center;
-}
-
-.select-button:hover {
-  background-color: #0056b3;
 }
 
 /* エラーおよび空リストメッセージ */
