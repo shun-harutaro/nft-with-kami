@@ -238,6 +238,7 @@ onMounted(() => {
   margin-top: 20px;
   padding: 10px;
   border: 2px solid #000000; /* 黒の枠を追加 */
+  background-color: #ffffff;
   border-radius: 8px;
   text-align: center;
   position: relative; /* z-indexを設定するためにpositionを追加 */
