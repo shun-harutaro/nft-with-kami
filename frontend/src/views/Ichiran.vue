@@ -33,7 +33,7 @@
       <!-- 戻るボタン -->
       <button class="back-button" @click="goBack">戻る</button>
     </div>
-    
+
     <!-- モーダル -->
     <div v-if="isModalOpen" class="modal" @click="closeModal">
       <div class="modal-content" @click.stop>

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Response
 import secrets
 from urllib.parse import urlencode
 
@@ -16,7 +16,6 @@ FRONTEND_BASE_URI = get_frontend_base_uri()
 @router.get("/auth/login")
 async def login():
     state = secrets.token_urlsafe(16)
-    # request.session["state"] = state
     base_url = "https://access.line.me/oauth2/v2.1/authorize"
     params = {
         "response_type": "code",
@@ -26,14 +25,26 @@ async def login():
         "scope": "profile openid",
     }
     redirect_url = f"{base_url}?{urlencode(params)}"
-    return RedirectResponse(url=redirect_url)
+    response = RedirectResponse(url=redirect_url)
+    response.set_cookie(
+        key="auth_state",
+        value=state,
+        httponly=True,  # JavaScriptからアクセスさせない
+        secure=True,    # httpsでのみ送信
+        samesite="lax",
+    )
+    return response
 
 
 @router.get("/auth/callback")
 async def auth_callback(
+    request: Request,
     code: str, state: str
     ):
-    # TODO stateの検証
+    cookie_state = request.cookies.get("auth_state")
+    # state検証
+    if not cookie_state or cookie_state != state:
+        raise HTTPException(status_code=400, detail="Invalid state parameter.")
     if not code:
         raise HTTPException(status_code=400, detail="Authorization code not found.")
     token_response = await get_token(code)
