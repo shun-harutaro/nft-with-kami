@@ -8,33 +8,42 @@ import axios from "axios";
 const router = useRouter();
 const userStore = useUserProfileStore();
 
+
 // ログイン状態とユーザー情報を取得
 const isLoggedIn = computed(() => userStore.isLoggedIn);
 const displayName = computed(() => userStore.displayName);
 const profileImageUrl = computed(() => userStore.profileImageUrl);
 
 // 初期化処理: コンポーネントのマウント時にプロフィールを取得
-onMounted(() => {
-  userStore.fetchUserProfile();
+onMounted(async () => {
+  await userStore.fetchUserProfile();
+  if (userStore.isLoggedIn) {
+    console.log("ここまでダヨーン");
+    try {
+      const response = await axios.get(`/api/users/me`);
+      console.log("成功したよーん");
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("作るよ～ん");
+        const postResponse = await axios.post("/api/users");
+        console.log(postResponse.status);
+      } else {
+        console.error("エラーが発生しました:", error);
+      }
+    }
+  }
 });
 
-// ユーザー登録を行う関数
-const registerUser = async () => {
-  try {
-    const response = await axios.post("/api/users");
-    console.log("ユーザー登録成功:", response.data);
-    alert("ユーザーが正常に登録されました");
-  } catch (error) {
-    console.error("ユーザー登録エラー:", error);
-    alert("ユーザー登録中にエラーが発生しました");
-  }
-};
 
 // ボタンクリック時の処理
-const handleClick = async () => {
-  await registerUser();
-  router.push("/location");
-};
+const handleClick = () => {
+  router.push("/location")
+}
+
+
+const viewHistory= () => {
+  router.push("/ichiran")
+}
 </script>
 
 
@@ -162,45 +171,48 @@ const handleClick = async () => {
   position: absolute;
   top: 60%;
   left: 50%;
-  transform: translate(-45%, -45%);
-  background-color: rgba(255, 69, 0, 1);
-  border: none;
-  border-radius: 50%;
-  color: rgba(255, 255, 255, 1);
+  transform: translate(-50%, -50%);
+  background-image: url('@/assets/img/hisigata.png'); /* 添付画像を背景に設定 */
+  background-size: cover; /* ボタン全体に画像を調整 */
+  background-position: center; /* 画像を中央揃え */
+  background-color: transparent; /* 背景色を透明に設定 */
+  border: none; /* 境界線を削除 */
+  border-radius: 0; /* 不要な丸みを削除 */
   cursor: pointer;
-  font: 400 50px 'Noto Serif JP', sans-serif;
+  color: #000000; /* 文字色 */
+  font-size: 30px!important; /* 文字サイズを大きく設定 */
+  font-weight: bold; /* 文字を太字に */
+  line-height: 1.2; /* 行の高さを調整 */
+  font: inherit;
   height: 200px; /* ボタンのサイズ */
   width: 200px;
   text-align: center;
   transition: transform 0.2s ease;
-  z-index: 20; /* ボタンをしめ縄の後ろに配置 */
+  z-index: 20; /* ボタンを最前面に配置 */
 }
 
-.oracle-button:hover,
-.oracle-button:focus {
-  outline: 3px solid rgba(255, 255, 255, 0.5);
-  transform: scale(1.02);
-}
 
-.oracle-button:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.8);
-}
 
-.oracle-button:active {
-  transform: scale(0.98);
-}
+
 
 .view-history-button {
-  position: relative;
+  position: absolute;
+  bottom: 20px; /* ボタンの位置を下部中央に配置 */
+  transform: translateX(30%); /* 水平方向に中央揃え */
   border-radius: 12px;
-  background-color: #ff4500;
-  align-self: center;
+  background-image: url('@/assets/img/location-header.png'); /* 添付画像を背景に設定 */
+  background-size: cover; /* ボタン全体に画像を調整 */
+  background-position: center; /* 画像を中央揃え */
+  background-color: transparent; /* 背景色を透明に設定 */
+  border: none; /* 境界線を削除 */
+  border-radius: 0; /* 不要な丸みを削除 */
   width: 242px;
   max-width: 100%;
   padding: 24px 28px;
   border: 2px solid rgba(255, 215, 0, 0.4);
   color: #fff;
   font: inherit;
+  font-size: 20px!important;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }

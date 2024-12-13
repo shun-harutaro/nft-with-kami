@@ -7,6 +7,7 @@ import Godcome from "./views/Godcome.vue"
 import Omikuji from "./views/Omikuji.vue"
 import Loading from "./views/Loading.vue"
 import Talk from "./views/Talk.vue"
+import Ichiran from "./views/Ichiran.vue"
 
 const routes = [
   { path: "/", name: "Login", component: Login },
@@ -15,6 +16,7 @@ const routes = [
   { path: "/omikuji", component: Omikuji},
   { path: "/loading", component: Loading},
   { path: "/talk", component: Talk},
+  { path: "/ichiran", component: Ichiran},
 ]
 
 const router = createRouter({
