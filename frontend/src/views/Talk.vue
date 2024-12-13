@@ -252,7 +252,7 @@ export default {
 .message.received .bubble {
   background-color: #fff;
   border: 1px solid #ddd;
-  z-index: 10; /* 吹き出しを前面に */
+  z-index: 11; /* 吹き出しを前面に */
   transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
@@ -260,7 +260,7 @@ export default {
 .bubble::before,
 .bubble::after {
   position: relative;
-  z-index: 11; /* 吹き出し内の文字をさらに前面に */
+  z-index: 12; /* 吹き出し内の文字をさらに前面に */
   transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
