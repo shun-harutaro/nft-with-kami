@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from models.user import User
 
 class Nft(SQLModel, table=True):
-    nft_id: str = Field(
+    id: str = Field(
         ..., primary_key=True, index=True, max_length=100,
     )
     user_id: str = Field(foreign_key="user.id", max_length=33)
