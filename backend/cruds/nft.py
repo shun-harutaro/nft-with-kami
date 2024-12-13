@@ -10,8 +10,8 @@ async def create_nft(db: AsyncSession, nft: Nft) -> Nft:
     return nft
 
 
-async def get_nft(db: AsyncSession, nft_id: str) -> Optional[Nft]:
-    return await db.get(Nft, nft_id)
+async def get_nft(db: AsyncSession, id: str) -> Optional[Nft]:
+    return await db.get(Nft, id)
 
 
 async def update_nft(db: AsyncSession, nft: Nft) -> Nft:
