@@ -61,32 +61,15 @@ export default {
   },
   data() {
     return {
-      messages: [],
-      newMessage: "",
-      threadId: "",
+      messages: [], // チャットメッセージ
+      newMessage: "", // 入力中のメッセージ
+      threadId: "", // スレッドID
     };
   },
   methods: {
-    async fetchMessages() {
-      try {
-        const response = await axios.post("/api/gpt/shrine-info?shrine=拳母神社", {
-          headers: { "Content-Type": "text/plain" },
-        });
-        const { text, thread_id } = response.data;
-
-        this.messages.push({
-          id: Date.now(),
-          sender: "system",
-          text: text,
-        });
-        this.threadId = thread_id;
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
-      }
-    },
-
+    // メッセージ送信
     async sendMessage() {
-      if (this.newMessage.trim() === "") return;
+      if (this.newMessage.trim() === "") return; // 空メッセージは無視
 
       const message = {
         id: Date.now(),
@@ -94,24 +77,49 @@ export default {
         text: this.newMessage,
       };
 
+      // 入力メッセージを画面に即座に反映
       this.messages.push(message);
-      const userMessage = this.newMessage;
-      this.newMessage = "";
+      const userMessage = this.newMessage; // 送信前に値を保持
+      this.newMessage = ""; // 入力欄をクリア
 
       try {
-        const response = await axios.post(
-          `/api/gpt/talking?text=${userMessage}&thread_id=${this.threadId}`
-        );
-        const { text } = response.data;
+        console.log("Thread ID:", this.threadId);
 
+        // サーバーにメッセージを送信
+        const response = await axios.post(`/api/gpt/talking?text=${userMessage}&thread_id=${this.threadId}`);
+
+        const { text, thread_id, end_point } = response.data;
+
+        // サーバーからの応答をチャットメッセージに追加
         this.messages.push({
           id: Date.now(),
           sender: "system",
           text: text,
         });
+
+        // スレッドIDを更新
+        this.threadId = thread_id;
+        console.log(end_point)
+        // end_point が 1 の場合、/loading ページに遷移
+        if (end_point === 1) {
+          // 5秒待機処理
+          console.log("Waiting for 5 seconds before navigation...");
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          
+          console.log("Navigating to /loading");
+          // 遷移処理
+          this.$router.push({
+            path: "/loading",
+            query: {
+              threadId: thread_id,
+            },
+          });
+        }
+
       } catch (error) {
         console.error("Failed to send message:", error);
 
+        // エラー時のメッセージを画面に表示
         this.messages.push({
           id: Date.now(),
           sender: "system",
@@ -121,9 +129,27 @@ export default {
     },
   },
   mounted() {
-    this.fetchMessages();
+    // クエリパラメータから `text` と `threadId` を取得
+    const { threadId, text } = this.$route.query;
+
+    if (!threadId || !text) {
+      console.error("Missing threadId or text in query parameters.");
+      return;
+    }
+
+    // 初期メッセージを追加
+    this.messages.push({
+      id: Date.now(),
+      sender: "system",
+      text: text,
+    });
+
+    // スレッドIDを設定
+    this.threadId = threadId;
   },
 };
+
+
 </script>
 
 <style scoped>

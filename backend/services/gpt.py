@@ -58,6 +58,19 @@ async def generate_text(prompt: str, thread_id: str, assistant_id: str) -> str:
 
     return message_content.value
 
+
+def contains_omikuji_phrase(text):
+    # 特定のフレーズを定義
+    # target_phrase = "おみくじをつくってやるからちょっと待つんじゃ。"
+    target_phrase = "ちょっと待つんじゃ。"
+    
+    # フレーズが含まれているかを判定
+    if target_phrase in text:
+        return 1  # フレーズが見つかった場合
+    return 0  # フレーズが見つからなかった場合
+
+
+
 async def chat_summary(thread_id):
     client = get_client()
     # スレッド内のメッセージを取得
