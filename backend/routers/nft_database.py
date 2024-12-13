@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/nft-database/",
+    "/nft/",
     tags=["NFT"],
     summary="nft-idの取得",
     response_model=Nft,
@@ -25,7 +25,7 @@ async def get_nft(
 
 
 @router.post(
-    "/nft-add",
+    "/nft",
     tags=["NFT"],
     summary="NFTをデータベースに追加する",
     response_model=Nft,
@@ -44,7 +44,7 @@ async def create_nft_endpoint(
 
 
 @router.delete(
-    "/nft_delete",
+    "/nft",
     tags=["NFT"],
     summary="NFTの削除",
 )
