@@ -14,7 +14,7 @@
         alt=""
       />
     </div>
-    <div class="messages">
+    <div class="messages" ref="messageList">
       <div
         v-for="message in messages"
         :key="message.id"
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, ref, nextTick } from "vue";
 import { useUserProfileStore } from "@/stores/userProfileStore";
 import axios from "axios";
 
@@ -79,6 +79,8 @@ export default {
 
       // 入力メッセージを画面に即座に反映
       this.messages.push(message);
+      this.scrollToEnd();
+
       const userMessage = this.newMessage; // 送信前に値を保持
       this.newMessage = ""; // 入力欄をクリア
 
@@ -97,17 +99,16 @@ export default {
           text: text,
         });
 
+        this.scrollToEnd(); // 応答追加後にスクロール
+
         // スレッドIDを更新
         this.threadId = thread_id;
-        console.log(end_point)
+
         // end_point が 1 の場合、/loading ページに遷移
         if (end_point === 1) {
-          // 5秒待機処理
           console.log("Waiting for 5 seconds before navigation...");
           await new Promise((resolve) => setTimeout(resolve, 5000));
-          
           console.log("Navigating to /loading");
-          // 遷移処理
           this.$router.push({
             path: "/loading",
             query: {
@@ -115,7 +116,6 @@ export default {
             },
           });
         }
-
       } catch (error) {
         console.error("Failed to send message:", error);
 
@@ -125,11 +125,21 @@ export default {
           sender: "system",
           text: "メッセージの送信に失敗しました。",
         });
+
+        this.scrollToEnd(); // エラーメッセージ追加後にスクロール
       }
+    },
+    // メッセージリストの一番下にスクロール
+    scrollToEnd() {
+      nextTick(() => {
+        const messageList = this.$refs.messageList;
+        if (messageList) {
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+      });
     },
   },
   mounted() {
-    // クエリパラメータから `text` と `threadId` を取得
     const { threadId, text } = this.$route.query;
 
     if (!threadId || !text) {
@@ -137,19 +147,16 @@ export default {
       return;
     }
 
-    // 初期メッセージを追加
     this.messages.push({
       id: Date.now(),
       sender: "system",
       text: text,
     });
 
-    // スレッドIDを設定
     this.threadId = threadId;
+    this.scrollToEnd(); // 初期メッセージ表示時にスクロール
   },
 };
-
-
 </script>
 
 <style scoped>
@@ -240,29 +247,18 @@ export default {
 
 /* 吹き出し */
 .bubble {
-  position: relative; /* z-index を有効にするために必要 */
-  z-index: 10; /* 背景や他の要素よりも前面に表示 */
+  position: relative;
+  z-index: 10;
   max-width: 70%;
   padding: 10px;
   border-radius: 15px;
   background-color: #dcf8c6;
   word-wrap: break-word;
-  transform: translateZ(0); /* Safariでの再描画を強制 */
-  color: #000000; /* フォントの色 */
+  color: #000000;
 }
 .message.received .bubble {
   background-color: #fff;
   border: 1px solid #ddd;
-  z-index: 11; /* 吹き出しを前面に */
-  transform: translateZ(0); /* Safariでの再描画を強制 */
-}
-
-/* 吹き出し内のテキストをさらに前面に */
-.bubble::before,
-.bubble::after {
-  position: relative;
-  z-index: 12; /* 吹き出し内の文字をさらに前面に */
-  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
 /* 入力エリア */
@@ -292,17 +288,6 @@ input {
   clip-path: polygon(100% 50%, 0 0, 0 100%);
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.send-button::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 60%; /* 線を左から40%の位置で止める */
-  height: 2px;
-  background-color: #fff;
-  transform: translateY(-50%);
 }
 
 .send-button:hover {
