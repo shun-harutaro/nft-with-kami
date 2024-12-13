@@ -1,6 +1,7 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from models.nft import Nft
 from typing import Optional
+from sqlalchemy.future import select
 
 
 async def create_nft(db: AsyncSession, nft: Nft) -> Nft:

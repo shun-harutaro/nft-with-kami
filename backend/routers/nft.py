@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile, Depends
+from typing import List, Dict
 from sqlmodel.ext.asyncio.session import AsyncSession
 from fastapi import APIRouter, HTTPException
 from database import get_db
@@ -14,10 +15,10 @@ from services.nft_service import (
 from utils.config import (
     get_nft_private_key
 )
-from models.nft import Nft  
+from models.nft import Nft
 import cruds.nft as nft_crud
-from models.nft import Nft  
 from services.line import get_user_id_from_cookie
+from utils.query import get_nfts_image_and_time_by_user_id
 
 NFT_PRIVATE_KEY = get_nft_private_key()
 
@@ -30,6 +31,7 @@ router = APIRouter()
     summary="画像のアップロードとNFTの発行"
 )
 async def mint(upload_file: UploadFile,
+               user_id: str = Depends(get_user_id_from_cookie),
                db: AsyncSession = Depends(get_db)
                ):
     image_url = await upload_image_to_pinata(upload_file)
@@ -54,10 +56,10 @@ async def mint(upload_file: UploadFile,
         "tokenId": token_id
     }
 
-    existing_nft = await nft_crud.get_user(db, tx_hash)
+    existing_nft = await nft_crud.get_nft(db, tx_hash)
     if existing_nft:
         raise HTTPException(status_code=400, detail="NFT already exists")
-    nft = Nft(id=tx_hash, user_id=get_user_id_from_cookie())
+    nft = Nft(id=tx_hash, user_id=user_id)
     await nft_crud.create_nft(db, nft)
     return response_data
 
@@ -90,3 +92,20 @@ async def balance():
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error occurred: {str(e)}")
+
+
+@router.get(
+    "/nft/users",
+    tags=["NFT"],
+    summary="特定のユーザーのNFT画像URLと作成日時を取得",
+    response_model=List[Dict[str, str]]
+)
+async def get_nfts_by_user_endpoint(
+    user_id: str = Depends(get_user_id_from_cookie),
+    db: AsyncSession = Depends(get_db),
+):
+    nfts = await get_nfts_image_and_time_by_user_id(db, user_id)
+    if not nfts:
+        raise HTTPException(
+            status_code=404, detail="No NFTs found for the given user ID")
+    return nfts
