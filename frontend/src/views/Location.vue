@@ -261,7 +261,6 @@ onMounted(() => {
   margin-top: 10px;
   padding: 10px 20px;
   font-size: 3.5vw;
-  background-color: #ffffff;
   color: #000000;
   border: 2px solid #000000; /* 黒の枠を追加 */
   border-radius: 4px;
