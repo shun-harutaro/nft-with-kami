@@ -51,10 +51,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 
 const router = useRouter();
+const route = useRoute();
 
 const picture = "https://tyoudoii-illust.com/wp-content/uploads/2024/07/oksign_businessman_simple-300x282.png";
 
@@ -72,8 +73,8 @@ const blobUrl = ref(null);
 
 onMounted(async () => {
   try {
-    const{text,photo,tokenId,transactionHash}=this.$route.query;
-    const blobUrl=photo;
+    const {photo, tokenId, transactionHash} = route.query;
+    blobUrl.value=photo;
     document.getElementById("var1").textContent = tokenId;
     document.getElementById("var2").textContent = transactionHash;
 

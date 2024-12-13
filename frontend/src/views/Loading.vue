@@ -33,39 +33,63 @@ export default {
       return omikujiText;
     },
 
+    // // 3. /gpt/json json形式に変える、神社情報取得
+    // async fetchJsonCreate(summaryText, updatedThreadId) {
+    //   console.log("Json形式に変更します");
+    //   const response = await axios.post(`/api/gpt/json?text=${encodeURIComponent(summaryText)}&thread_id=${updatedThreadId}`);
+    //   console.log("お願いします");
+    //   const { text: omikujiText, "thread_id": thread_id, shrineName: shrineName } = response.data;
+    //   console.log("Omikuji fetched1:", omikujiText_json);
+    //   const omikujiText_json = `{${omikujiText}}`;
+    //   console.log("Omikuji fetched2:", omikujiText_json);
+    //   console.log("Omikuji Shrine:", shrineName);
+    //   return omikujiText_json, shrineName;
+    // },
+
     // 3. /gpt/json json形式に変える、神社情報取得
     async fetchJsonCreate(summaryText, updatedThreadId) {
       console.log("Json形式に変更します");
-      const response = await axios.post(`/api/gpt/json?text=${summaryText}&thread_id=${updatedThreadId}`);
-      const { text: omikujiText_json, shrineName: shrineName } = response.data;
+      const response = await axios.post(`/api/gpt/json?text=${encodeURIComponent(summaryText)}&thread_id=${updatedThreadId}`);
+      console.log("お願いします");
 
-      console.log("Omikuji fetched:", omikujiText_json);
-      console.log("Omikuji Shrine:", shrineName)
-      return omikujiText_json, shrineName;
+      const { text: omikujiText, shrineName: shrineName } = response.data;
+
+      console.log("Omikuji fetched1:", omikujiText);
+      console.log("Omikuji Shrine:", shrineName);
+
+      // omikujiText_jsonを新たに作成
+      const omikujiText_json = `{${omikujiText}}`;
+
+      console.log("Formatted Omikuji JSON:", omikujiText_json);
+
+      return { omikujiText_json, shrineName };
     },
+
     
     //4. おみくじの生成とメタデータの取得
-    async fetchJsonCreate(omikujiText_json, shrineName) {
-         //LINEアイコン取得
-        const userProfileStore = useUserProfileStore();
-        const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
-        console.log(profileImageUrl.value);
+    async fetchCreatePhoto(omikujiText_json, shrineName) {
+      //LINEアイコン取得
+      const userProfileStore = useUserProfileStore();
+      const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
+      console.log(profileImageUrl.value);
 
-        // おみくじ画像生成リクエスト
-        const blobUrl = ref(null);
-        console.log("2");
-        const response = await axios.post(
-          `/api/omikuzi?shrine_name=${encodeURIComponent(shrineName)}&icon_url=${encodeURIComponent(profileImageUrl.value)}`,
-            omikujiText_json,
-          {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-            responseType: 'blob' // 画像をblobで受け取る
-          }
-        );
-        console.log("3");
-        console.log("ここまでできてるよ");
+      // おみくじ画像生成リクエスト
+      const blobUrl = ref(null);
+      console.log("2");
+      console.log(omikujiText_json)
+      console.log(profileImageUrl.value)
+      const response = await axios.post(
+        `/api/omikuzi?shrine_name=${encodeURIComponent(shrineName)}&icon_url=${encodeURIComponent(profileImageUrl.value)}`,
+          omikujiText_json,
+        {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+          responseType: 'blob' // 画像をblobで受け取る
+        }
+      );
+      console.log("3");
+      console.log("ここまでできてるよ");
 
 
 
@@ -84,18 +108,24 @@ export default {
         }
       );  
       console.log("NFT Token ID:", metadataResponse.data.tokenId);
-      return metadataResponse.image,metadataResponse.data.tokenId,metadataResponse.data.transactionHash;
+      console.log(metadataResponse.data.image);
+      console.log(metadataResponse.data.transactionHash);
+      const photo=metadataResponse.data.image;
+      const tokenId=metadataResponse.data.tokenId;
+      const transactionHash=metadataResponse.data.transactionHash;
+      return { photo, tokenId, transactionHash };
     },
 
-    // . /Omikuji ページに遷移する関数
+    // 5. /Omikuji ページに遷移する関数
     navigateToOmikujiPage(photo, tokenId, transactionHash) {
       console.log("Navigating to /Omikuji with omikuji text...");
+      console.log("photo:", photo, "tokenId:", tokenId, "transactionHash:", transactionHash);
       this.$router.push({
         path: "/Omikuji",
         query: {
-          photo: metadataResponse.image,
-          tokenId: metadataResponse.data.tokenId,
-          transactionHash: metadataResponse.data.transactionHash
+          photo: photo,
+          tokenId: tokenId,
+          transactionHash: transactionHash
         },
       });
     },
@@ -110,10 +140,13 @@ export default {
         const omikujiText = await this.fetchOmikuji(summaryText, updatedThreadId);
 
         // Step 3: jsonに変更
-        const { text: omikujiText_json, shrineName: shrineName } = await this.fetchJsonCreate(summaryText, updatedThreadId);
+        const { omikujiText_json, shrineName: shrineName } = await this.fetchJsonCreate(summaryText, updatedThreadId);
 
-        // Step 3: Omikuji ページに遷移
-        this.navigateToOmikujiPage(omikujiText);
+        // Step 4: photoを生成
+        const {photo, tokenId, transactionHash} = await this.fetchCreatePhoto(omikujiText_json, shrineName);
+        
+        // Step 4: Omikuji ページに遷移
+        this.navigateToOmikujiPage(photo, tokenId, transactionHash);
 
       } catch (error) {
         console.error("Error during fetching or navigation:", error);

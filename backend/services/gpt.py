@@ -2,6 +2,8 @@ from openai import AsyncOpenAI
 
 from utils.config import get_openai_api_key
 
+import json
+
 client = None
 API_KEY = get_openai_api_key()
 
@@ -74,7 +76,7 @@ def contains_omikuji_phrase(text):
 async def chat_summary(thread_id):
     client = get_client()
     # スレッド内のメッセージを取得
-    thread_messages = await client.beta.threads.messages.list(thread_id)
+    thread_messages = await client.beta.threads.messages.list(thread_id, limit = 100)
 
     thread_messages.data.reverse()
 
@@ -115,5 +117,17 @@ async def get_shrineName_inthread(thread_id):
     return {"text": None}
 
 
-
-
+ # json形式に変換 -> 使わない
+def text_to_json(text):
+    lines = text.strip().split("\n")
+    json_data = {
+        "運勢": lines[0].strip(', '),
+        "願望": lines[1].split(', ')[1].strip(),
+        "健康": lines[2].split(', ')[1].strip(),
+        "金運": lines[3].split(', ')[1].strip(),
+        "学問": lines[4].split(', ')[1].strip(),
+        "恋愛": lines[5].split(', ')[1].strip(),
+        "神託": "".join(lines[6:]).strip()
+    }
+    return json_data
+ 

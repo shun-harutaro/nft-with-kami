@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from schemas.text import TextResponse
-from services.gpt import generate_text, create_new_thread_id, chat_summary, contains_omikuji_phrase, get_shrineName_inthread
+from services.gpt import generate_text, create_new_thread_id, chat_summary, contains_omikuji_phrase, get_shrineName_inthread, text_to_json
 
 router = APIRouter()
 
