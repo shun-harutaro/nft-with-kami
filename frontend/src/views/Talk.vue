@@ -248,6 +248,7 @@ export default {
   background-color: #dcf8c6;
   word-wrap: break-word;
   transform: translateZ(0); /* Safariでの再描画を強制 */
+  color: #000000; /* フォントの色 */
 }
 .message.received .bubble {
   background-color: #fff;
