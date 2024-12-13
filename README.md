@@ -29,8 +29,6 @@ cd nft-nenga
 ```
 touch .env
 echo "OPENAI_API_KEY=[openAI api key]" >> .env
-echo "OPENAI_ASSISTANT_ID=[openAI assistant id]" >> .env
-echo "OPENAI_THREAD_ID=[openAI thread id]" >> .env
 echo "GOOGLE_MAPS_API_KEY=[google maps api key]" >> .env
 echo "LINE_CLIENT_ID=[line client id]" >> .env
 echo "LINE_CLIENT_SECRET=[line client secret]" >> .env
@@ -38,9 +36,6 @@ echo "PINATA_API_KEY=[pinata api key]" >> .env
 echo "PINATA_SECRET_API_KEY=[pinata api secret]" >> .env
 echo "NFT_ACCOUNT_ADDRESS=[nft account address]" >> .env
 echo "NFT_PRIVATE_KEY=[nft private key]" >> .env
-```
-```
-echo "LINE_REDIRECT_URI=https://localhost/api/auth/callback" >> .env
 ```
 
 3. 自己署名証明書の発行

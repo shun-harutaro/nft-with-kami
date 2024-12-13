@@ -5,8 +5,10 @@
 </template>
 
 <script setup>
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const loginUrl = new URL("/api/auth/login", baseUrl);
   const handleLogin = () => {
-    window.location.href = "/api/auth/login"
+    window.location.href = loginUrl
   }
 </script>
 
