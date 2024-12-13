@@ -242,7 +242,6 @@ onMounted(() => {
   background-color: rgba(255, 255, 255, 0.9); /* 背景を半透明に */
   text-align: center;
   position: relative; /* z-indexを設定するためにpositionを追加 */
-  z-index: 10; /* 他の要素より前面に */
 }
 
 .selected-shrine h2,
