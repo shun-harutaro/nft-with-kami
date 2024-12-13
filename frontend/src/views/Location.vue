@@ -239,7 +239,6 @@ onMounted(() => {
   padding: 10px;
   border: 2px solid #000000; /* 黒の枠を追加 */
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.9); /* 背景を半透明に */
   text-align: center;
   position: relative; /* z-indexを設定するためにpositionを追加 */
   z-index: 1000; /* 他の要素よりも高い値を設定 */
