@@ -1,54 +1,58 @@
 <template>
-    <section class="history-container">
-      <div class="history-wrapper">
+  <section class="history-container">
+    <div class="history-wrapper">
+      <img
+        loading="lazy"
+        src="@/assets/img/new_background.png"
+        class="background-image"
+        alt=""
+      />
+      <!-- タイトル -->
+      <h1 class="title">過去のおみくじ一覧</h1>
+      <div class="content-wrapper">
         <img
           loading="lazy"
-          src="@/assets/img/new_background.png"
-          class="background-image"
+          src="@/assets/img/background-shrine-alpha.png"
+          class="overlay-image"
           alt=""
         />
-        <!-- タイトル -->
-        <h1 class="title">過去のおみくじ一覧</h1>
-        <div class="content-wrapper">
-          <img
-            loading="lazy"
-            src="@/assets/img/background-shrine-alpha.png"
-            class="overlay-image"
-            alt=""
-          />
-          <div class="history-list">
-            <!-- 配列からURLと作成年月日を利用 -->
-            <template v-for="([url, date], index) in imageList" :key="index">
-              <img
-                loading="lazy"
-                :src="url"
-                class="fortune-image"
-                :alt="`Fortune result for image ${index}`"
-              />
-              <time class="date-text">{{ date }}</time>
-            </template>
-          </div>
+        <div class="history-list">
+          <!-- 配列からURLと作成年月日を利用 -->
+          <template v-for="([url, date], index) in imageList" :key="index">
+            <img
+              loading="lazy"
+              :src="url"
+              class="fortune-image"
+              :alt="`Fortune result for image ${index}`"
+              @click="openModal(url)"
+            />
+            <time class="date-text">{{ date }}</time>
+          </template>
         </div>
-        <!-- 戻るボタン -->
-        <button class="back-button" @click="goBack">戻る</button>
       </div>
-    </section>
-  </template>
-  
-  
-  <script>
-import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useUserProfileStore } from "@/stores/userProfileStore";
+      <!-- 戻るボタン -->
+      <button class="back-button" @click="goBack">戻る</button>
+    </div>
+    
+    <!-- モーダル -->
+    <div v-if="isModalOpen" class="modal" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <img :src="modalImageUrl" class="modal-image" alt="Expanded fortune image" />
+        <button class="close-button" @click="closeModal">×</button>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
 import axios from "axios";
 
-
-
-
-  export default {
+export default {
   data() {
     return {
       imageList: [], // [[URL, 作成年月日], ...] の形式に変換して保存
+      isModalOpen: false, // モーダルの表示状態
+      modalImageUrl: "", // モーダルで表示する画像のURL
     };
   },
   methods: {
@@ -59,7 +63,7 @@ import axios from "axios";
 
         // レスポンスが [{ image_url, created_at }, ...] の形式であることを想定
         if (response.data && Array.isArray(response.data)) {
-          this.imageList = response.data.map(item => [item.image_url, item.created_at]);
+          this.imageList = response.data.map((item) => [item.image_url, item.created_at]);
         } else {
           console.error("Unexpected response format:", response.data);
         }
@@ -71,17 +75,25 @@ import axios from "axios";
     goBack() {
       this.$router.go(-1); // 前のページに戻る
     },
+    // モーダルを開く
+    openModal(url) {
+      this.modalImageUrl = url;
+      this.isModalOpen = true;
+    },
+    // モーダルを閉じる
+    closeModal() {
+      this.isModalOpen = false;
+      this.modalImageUrl = "";
+    },
   },
   mounted() {
     // コンポーネントがマウントされたらデータを取得
     this.fetchImageList();
   },
 };
-  </script>
-  
-  
-  <style scoped>
-  
+</script>
+
+<style scoped>
 /* 全体のコンテナ */
 .history-container {
   background-color: #fff;
@@ -150,29 +162,29 @@ import axios from "axios";
 
 /* 日付テキスト */
 .date-text {
-  position: relative; /* 擬似要素を配置するために必要 */
+  position: relative;
   align-self: center;
   z-index: 10;
-  margin-top: 20px; /* 上に少し余白を追加 */
-  margin-bottom: 20px; /* 下に余白を追加 */
+  margin-top: 20px;
+  margin-bottom: 20px;
   font-weight: bold;
-  color: #333; /* テキストの色 */
-  font-size: 36px; /* 日付のフォントサイズを大きく */
+  color: #333;
+  font-size: 36px;
   font: inherit;
 }
 
 .date-text::before {
-  content: ""; /* 空のコンテンツを指定 */
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* 中央揃え */
-  width: 120%; /* 四角形の幅を少し広く */
-  height: 140%; /* 四角形の高さを少し広く */
-  background-color: #ffffff; /* 背景色を白に設定 */
-  border-radius: 10px; /* 角を丸くする */
-  z-index: -1; /* テキストより後ろに配置 */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 影をつける */
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 140%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  z-index: -1;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* おみくじ画像 */
@@ -184,7 +196,7 @@ import axios from "axios";
 }
 
 .fortune-image:not(:first-child) {
-  margin-top: 30px; /* 画像間の間隔を広げる */
+  margin-top: 30px;
 }
 
 /* オーバーレイ画像 */
@@ -199,33 +211,70 @@ import axios from "axios";
 
 /* 戻るボタン */
 .back-button {
-  position: absolute; /* 元の位置調整の機能を保持 */
-  bottom: 20px; /* 背景画像の下部に配置 */
-  left: 50%; /* 中央揃え */
-  transform: translateX(-50%); /* 中央揃えの補正 */
-  border-radius: 12px; /* 新しいデザインの角丸 */
-  background-image: url('@/assets/img/location-header.png'); /* 添付画像を背景に設定 */
-  background-size: cover; /* ボタン全体に画像を調整 */
-  background-position: center; /* 画像を中央揃え */
-  background-color: transparent; /* 背景色を透明に設定 */
-  border: none; /* 境界線を削除 */
-  border-radius: 0; /* 不要な丸みを削除 */
-  align-self: center; /* セルフ中央揃え（位置には影響なし） */
-  width: 200px; /* 固定幅 */
-  max-width: 100%; /* レスポンシブ調整 */
-  padding: 24px 28px; /* 新しいパディング */
-  border: 2px solid rgba(255, 215, 0, 0.4); /* ゴールド系の半透明ボーダー */
-  color: #fff; /* テキストの色を白に */
-  font-size: 36px; /* ボタンの文字サイズを大きく */
-  font: inherit; /* 継承フォント設定 */
-  cursor: pointer; /* クリック可能に */
-  transition: background-color 0.2s ease; /* 背景色の変更アニメーション */
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background-image: url('@/assets/img/location-header.png');
+  background-size: cover;
+  background-position: center;
+  background-color: transparent;
+  border: none;
+  align-self: center;
+  width: 200px;
+  max-width: 100%;
+  padding: 24px 28px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  color: #fff;
+  font-size: 36px;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .back-button:hover {
-  background-color: #e03e00; /* ホバー時に背景色を少し暗くする */
+  background-color: #e03e00;
 }
 
+/* モーダルスタイル */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  </style>
-  
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: #fff;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+}
+</style>
