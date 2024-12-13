@@ -129,7 +129,6 @@ const viewHistory = () => {
   position: absolute;
   top: 50%; /* 縦の中央に配置 */
   left: 50%;
-  transform: translate(-50%, -50%);
   background-image: url('@/assets/img/hisigata.png');
   background-size: cover;
   background-position: center;
