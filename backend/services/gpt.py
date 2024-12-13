@@ -2,6 +2,8 @@ from openai import AsyncOpenAI
 
 from utils.config import get_openai_api_key
 
+import json
+
 client = None
 API_KEY = get_openai_api_key()
 
@@ -74,7 +76,7 @@ def contains_omikuji_phrase(text):
 async def chat_summary(thread_id):
     client = get_client()
     # スレッド内のメッセージを取得
-    thread_messages = await client.beta.threads.messages.list(thread_id)
+    thread_messages = await client.beta.threads.messages.list(thread_id, limit = 100)
 
     thread_messages.data.reverse()
 
@@ -91,4 +93,41 @@ async def chat_summary(thread_id):
     # JSON形式で返却
     return {"texts": texts}
 
+async def get_shrineName_inthread(thread_id):
+    client = get_client()
 
+    # スレッド内の全てのメッセージを取得
+    response = await client.beta.threads.messages.list(thread_id, limit = 100)
+
+    # レスポンスの確認
+    if not response or not response.data:
+        return {"text": None}  # メッセージが取得できない場合
+
+    # メッセージを時系列順に並べ替え
+    thread_messages = response.data[::-1]
+
+    # 最初の "role" が "user" のメッセージを探す
+    for message in thread_messages:
+        if message.role == "user" and message.content:
+            if isinstance(message.content, list) and message.content and message.content[0].type == "text":
+                # "~神社" のような最初の会話内容を返す
+                return message.content[0].text.value
+
+    # 該当するメッセージが見つからない場合
+    return {"text": None}
+
+
+ # json形式に変換 -> 使わない
+def text_to_json(text):
+    lines = text.strip().split("\n")
+    json_data = {
+        "運勢": lines[0].strip(', '),
+        "願望": lines[1].split(', ')[1].strip(),
+        "健康": lines[2].split(', ')[1].strip(),
+        "金運": lines[3].split(', ')[1].strip(),
+        "学問": lines[4].split(', ')[1].strip(),
+        "恋愛": lines[5].split(', ')[1].strip(),
+        "神託": "".join(lines[6:]).strip()
+    }
+    return json_data
+ 

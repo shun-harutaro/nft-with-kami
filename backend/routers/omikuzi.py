@@ -29,6 +29,7 @@ async def omikuzi(omikuzi_text: OmikuziText,
     # 送信後に一時ファイルを削除
     background_tasks.add_task(remove_file, generated_image_path)
 
+    print(generated_image_path)
     return FileResponse(
         generated_image_path,
         media_type="image/png",
