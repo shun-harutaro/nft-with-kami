@@ -44,56 +44,53 @@
   </section>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+<script>
 import axios from "axios";
 
-// Reactive state
-const imageList = ref([]); // [[URL, 作成年月日], ...] の形式に変換して保存
-const isModalOpen = ref(false); // モーダルの表示状態
-const modalImageUrl = ref(""); // モーダルで表示する画像のURL
+export default {
+  data() {
+    return {
+      imageList: [], // [[URL, 作成年月日], ...] の形式に変換して保存
+      isModalOpen: false, // モーダルの表示状態
+      modalImageUrl: "", // モーダルで表示する画像のURL
+    };
+  },
+  methods: {
+    // サーバーから画像 URL と作成年月日を取得
+    async fetchImageList() {
+      try {
+        const response = await axios.get("/api/nft/users");
 
-// Router instance
-const router = useRouter();
-
-// サーバーから画像 URL と作成年月日を取得
-const fetchImageList = async () => {
-  try {
-    const response = await axios.get("/api/nft/users");
-
-    // レスポンスが [{ image_url, created_at }, ...] の形式であることを想定
-    if (response.data && Array.isArray(response.data)) {
-      imageList.value = response.data.map((item) => [item.image_url, item.created_at]);
-    } else {
-      console.error("Unexpected response format:", response.data);
-    }
-  } catch (error) {
-    console.error("Failed to fetch image list:", error);
-  }
+        // レスポンスが [{ image_url, created_at }, ...] の形式であることを想定
+        if (response.data && Array.isArray(response.data)) {
+          this.imageList = response.data.map((item) => [item.image_url, item.created_at]);
+        } else {
+          console.error("Unexpected response format:", response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch image list:", error);
+      }
+    },
+    // 戻るボタンの動作
+    goBack() {
+      this.$router.go(-1); // 前のページに戻る
+    },
+    // モーダルを開く
+    openModal(url) {
+      this.modalImageUrl = url;
+      this.isModalOpen = true;
+    },
+    // モーダルを閉じる
+    closeModal() {
+      this.isModalOpen = false;
+      this.modalImageUrl = "";
+    },
+  },
+  mounted() {
+    // コンポーネントがマウントされたらデータを取得
+    this.fetchImageList();
+  },
 };
-
-// 戻るボタンの動作
-const goBack = () => {
-  router.go(-1); // 前のページに戻る
-};
-
-// モーダルを開く
-const openModal = (url) => {
-  modalImageUrl.value = url;
-  isModalOpen.value = true;
-};
-
-// モーダルを閉じる
-const closeModal = () => {
-  isModalOpen.value = false;
-  modalImageUrl.value = "";
-};
-
-// コンポーネントがマウントされたらデータを取得
-onMounted(() => {
-  fetchImageList();
-});
 </script>
 
 <style scoped>
