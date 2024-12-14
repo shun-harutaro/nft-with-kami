@@ -290,7 +290,20 @@ input {
   transition: background-color 0.3s ease;
 }
 
+.send-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 50%; /* 中央まで */
+  height: 2px; /* 線の太さ */
+  background-color: #ffffff;
+  transform: translateY(-50%);
+}
+
 .send-button:hover {
   background-color: #0056b3;
 }
+
+
 </style>
