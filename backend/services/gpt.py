@@ -4,6 +4,8 @@ from utils.config import get_openai_api_key
 
 import json
 
+import re
+
 client = None
 API_KEY = get_openai_api_key()
 
@@ -64,7 +66,7 @@ async def generate_text(prompt: str, thread_id: str, assistant_id: str) -> str:
 def contains_omikuji_phrase(text):
     # 特定のフレーズを定義
     # target_phrase = "おみくじをつくってやるからちょっと待つんじゃ。"
-    target_phrase = "ちょっと待つんじゃ。"
+    target_phrase = "<EOT>"
     
     # フレーズが含まれているかを判定
     if target_phrase in text:
@@ -131,3 +133,12 @@ def text_to_json(text):
     }
     return json_data
  
+
+def remove_eot(text: str) -> str:
+    return re.sub(r"<EOT>$","",text)
+
+# def remove_eot(text: str) -> str:
+#     # <EOT>が含まれていれば削除し、含まれていなければそのまま返す
+#     if "<EOT>" in text:
+#         return re.sub(r"<EOT>$", "", text)
+#     return text
