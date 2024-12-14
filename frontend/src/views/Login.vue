@@ -2,11 +2,10 @@
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserProfileStore } from "@/stores/userProfileStore";
-import LoginButton from "@/components/LoginButton.vue"
+import LoginButton from "@/components/LoginButton.vue";
+import axios from "axios";
 
 const router = useRouter();
-
-// ストアのインスタンスを取得
 const userStore = useUserProfileStore();
 
 // ログイン状態とユーザー情報を取得
@@ -15,17 +14,29 @@ const displayName = computed(() => userStore.displayName);
 const profileImageUrl = computed(() => userStore.profileImageUrl);
 
 // 初期化処理: コンポーネントのマウント時にプロフィールを取得
-onMounted(() => {
-  userStore.fetchUserProfile();
+onMounted(async () => {
+  await userStore.fetchUserProfile();
+  if (userStore.isLoggedIn) {
+    try {
+      const response = await axios.get(`/api/users/me`);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        const postResponse = await axios.post("/api/users");
+      } else {
+        console.error("エラーが発生しました:", error);
+      }
+    }
+  }
 });
 
-const viewHistory = () => {
-  /* TODO: 実装 */
-}
-
+// ボタンクリック時の処理
 const handleClick = () => {
-  router.push("/location")
-}
+  router.push("/location");
+};
+
+const viewHistory = () => {
+  router.push("/ichiran");
+};
 </script>
 
 
@@ -56,33 +67,32 @@ const handleClick = () => {
           class="oracle-button"
           @click="handleClick"
         >
-          神託を<br/>得る
+          おみくじ<br/>取得
         </button>
         <button
           class="view-history-button"
-          style="position: absolute; bottom: 20px; left: 20px;"
           @click="viewHistory"
         >
-          過去の神託を見る
+          過去の<br/>おみくじ
         </button>
       </div>
       <div v-else>
         <LoginButton
-          style="position: absolute; z-index: 10; transform: scale(1); top: 750px; left: 50%; transform: translateX(-50%) scale(1.25);" />
+          class="login-button"
+        />
       </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
 .gallery-container {
   background: linear-gradient(to bottom, #35ECBB, #FF9C12);
   display: flex;
-  max-width: 480px;
-  width: 100%;
   flex-direction: column;
   overflow: hidden;
+  width: 100%;
+  height: 100vh; /* 高さを画面の縦幅に合わせる */
   margin: 0 auto;
 }
 
@@ -90,9 +100,8 @@ const handleClick = () => {
   display: flex;
   flex-direction: column;
   position: relative;
-  aspect-ratio: 0.461;
   width: 100%;
-  padding: 106px 0;
+  height: 100%; /* 高さを画面の縦幅に合わせる */
 }
 
 .gallery-background,
@@ -102,107 +111,97 @@ const handleClick = () => {
   height: 100%;
   width: 100%;
   object-fit: cover;
-  object-position: center;
 }
 
 .gallery-header {
-  aspect-ratio: 1.22;
-  object-fit: contain;
-  object-position: center;
-  width: 219px;
-  max-width: 100%;
-  z-index:10 ;
-}
-
-.gallery-content {
-  aspect-ratio: 1.26;
-  object-fit: contain;
-  object-position: center;
-  width: 100%;
-  margin-top: 89px;
-  position: relative;
-  top: 20px;
-}
-
-.gallery-footer {
-  aspect-ratio: 3.45;
-  object-fit: contain;
-  object-position: center;
-  width: 207px;
-  align-self: center;
-  max-width: 100%;
-  position: relative;
-  top: 50px;
-  z-index: 100000;
-}
-
-.visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  top: 130px !important; /* ロゴを少し下に配置 */
+  left: 40px !important; /* ロゴを少し右に配置 */
+  width: 200px!important; /* ロゴの幅を指定してサイズを大きくする */
+  height: auto; /* 高さは自動で調整 */
+  aspect-ratio: 1.22; /* アスペクト比を維持 */
+  z-index: 10;
+  max-width: 100%; /* 最大幅は100% */
 }
+
 
 .oracle-button {
   position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-45%, -45%);
-  background-color: rgba(255, 69, 0, 1);
-  border: none;
-  border-radius: 50%;
-  color: rgba(255, 255, 255, 1);
-  cursor: pointer;
-  font: 400 50px 'Noto Serif JP', sans-serif;
-  height: 200px; /* ボタンのサイズ */
-  width: 200px;
+  top: 60%; /* 縦の中央に配置 */
+  left: 50%; /* 横の中央に配置 */
+  transform: translate(-50%, -50%) scale(2); /* 中心揃え + 大きさ2倍 */
+  background-image: url('@/assets/img/hisigata.png');
+  background-size: cover;
+  background-position: center;
+  background-color: transparent;
+  color: #000000;
+  height: 12vh; /* 元の高さ */
+  width: 12vh; /* 元の幅 */
   text-align: center;
-  transition: transform 0.2s ease;
-  z-index: 20; /* ボタンをしめ縄の後ろに配置 */
-}
+  font-size: 20px;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  z-index: 20;
+  font: inherit;
 
-.oracle-button:hover,
-.oracle-button:focus {
-  outline: 3px solid rgba(255, 255, 255, 0.5);
-  transform: scale(1.02);
-}
-
-.oracle-button:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.8);
-}
-
-.oracle-button:active {
-  transform: scale(0.98);
+  /* 文字間隔調整 */
+  letter-spacing: -1px; /* 文字間を狭める */
+  /* 改行間隔の調整 */
+  line-height: 1.1; /* 行間を狭くする */
 }
 
 .view-history-button {
-  position: relative;
-  border-radius: 12px;
-  background-color: #ff4500;
-  align-self: center;
-  width: 242px;
-  max-width: 100%;
-  padding: 24px 28px;
-  border: 2px solid rgba(255, 215, 0, 0.4);
+  position: absolute;
+  bottom: 5%; /* 下に配置 */
+  left: 50%;
+  transform: translateX(-50%);
+  background-image: url('@/assets/img/location-header.png');
+  background-size: cover;
+  background-position: center;
   color: #fff;
-  font: inherit;
+  padding: 10px;
+  width: 70%;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  z-index: 10;
+  font: inherit;
+  line-height: 1.2; /* 行間を狭くする */
 }
 
 .view-history-button:hover,
 .view-history-button:focus {
   background-color: #ff5722;
-  outline: none;
 }
 
-.view-history-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.5);
+.login-button {
+  position: absolute;
+  z-index: 10;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%) scale(1.25);
 }
 
+@media (max-width: 600px) {
+  .gallery-header {
+    top: 20px; /* スマホでもロゴを少し下に配置 */
+    left: 0;
+    width: 40%; /* 小さな画面向けに幅を調整 */
+  }
+
+  .oracle-button,
+  .view-history-button {
+    font-size: 14px;
+    height: 10vh;
+    width: 10vh;
+  }
+
+  .login-button {
+    transform: translateX(-50%) scale(1);
+    bottom: 0px!important;
+  }
+}
 </style>

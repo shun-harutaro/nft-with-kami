@@ -2,7 +2,7 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 from database import get_db
 from models.user import User
-from services.line import get_profile, get_user_id_from_cookie
+from services.line import get_profile, get_user_id_from_cookie, get_user_id
 from utils.logging import get_logger
 
 import cruds.user as user_crud
@@ -35,8 +35,9 @@ async def get_user(
 def login(id_token: str = Cookie(None)):
     if id_token is None:
         raise HTTPException(status_code=401, detail="No id_token received")
+    user_id = get_user_id(id_token)
     profile = get_profile(id_token)
-    return profile
+    return {"user_id": user_id, **profile}
 
 
 @router.post(

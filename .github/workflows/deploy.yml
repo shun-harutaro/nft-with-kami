@@ -23,9 +23,21 @@ jobs:
           username: ${{ vars.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Add SSL certificates for DB
+        run: |
+          echo "${{ secrets.DB_SSL_CERT }}" > ${{ github.workspace }}/backend/db-cert.pem
+          chmod 644 ${{ github.workspace }}/backend/db-cert.pem
+
       - name: 'Compose Customized Docker Image'
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 \
             -f ./backend/Dockerfile \
             -t ${{ vars.LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }} \
             --push ./backend
+
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'nft-with-kami'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: '${{ vars.LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }}'

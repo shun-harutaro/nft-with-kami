@@ -1,25 +1,23 @@
 <template>
-  <button @click="handleLogin">
+  <a :href="loginUrl">
     <img src="@/assets/img/btn_login_base.png" alt="LINEでログイン" />
-  </button>
+  </a>
 </template>
 
 <script setup>
-  const handleLogin = () => {
-    window.location.href = "/api/auth/login"
-  }
+import { ref } from 'vue';
+
+const baseUrl = import.meta.env.VITE_API_URL;
+const loginUrl = ref(`${baseUrl}/api/auth/login`);
 </script>
 
 <style scoped>
-button {
-  padding: 0;
-  border: none;
-  background: none;
+a {
   display: inline-block;
-  cursor: pointer;
+  text-decoration: none;
 }
 
-button img {
+a img {
   width: 100%;
   height: auto;
 }

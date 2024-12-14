@@ -184,7 +184,7 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(24px, 8vw, 64px); /* 動的フォントサイズ */
+  font-size: 35px!important;
   font-weight: bold;
   color: #fff;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -238,36 +238,38 @@ onMounted(() => {
   margin-top: 20px;
   padding: 10px;
   border: 2px solid #000000; /* 黒の枠を追加 */
+  background-color: #ffffff;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.9);
   text-align: center;
+  position: relative; /* z-indexを設定するためにpositionを追加 */
+  z-index: 1000; /* 他の要素よりも高い値を設定 */
+  transform: translateZ(0); /* Safariでの再描画を強制 */
+  color: #000000;
 }
 
-.selected-shrine h2 {
+/* タイトルと詳細の文字要素 */
+.selected-shrine h2,
+.selected-shrine p {
+  position: relative; /* z-indexを指定できるように設定 */
+  z-index: 1001; /* 親要素よりもさらに前面に表示 */
   font-size: 4vw;
   font-weight: bold;
+  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
-.selected-shrine p {
-  font-size: 3.5vw;
-  margin: 5px 0;
-}
 
 .select-button {
   margin-top: 10px;
   padding: 10px 20px;
   font-size: 3.5vw;
-  background-color: #ffffff;
   color: #000000;
   border: 2px solid #000000; /* 黒の枠を追加 */
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  position: relative; /* z-indexを指定できるように設定 */
+  z-index: 15; /* 背景よりも前面に表示 */
   text-align: center;
-}
-
-.select-button:hover {
-  background-color: #0056b3;
 }
 
 /* エラーおよび空リストメッセージ */

@@ -1,16 +1,13 @@
 from openai import AsyncOpenAI
 
-from utils.config import (
-    get_openai_api_key,
-    get_openai_assistant_id,
-    get_openai_thread_id,
-)
+from utils.config import get_openai_api_key
+
+import json
+
+import re
 
 client = None
 API_KEY = get_openai_api_key()
-ASSISTANT_ID = get_openai_assistant_id()
-THREAD_ID = get_openai_thread_id()
-
 
 
 def get_client() -> AsyncOpenAI:
@@ -34,7 +31,7 @@ async def delete_thread_id(thread_id: str):
     await client.beta.threads.delete(thread_id)
 
 
-async def generate_text(prompt: str, thread_id: str = THREAD_ID, assistant_id: str = ASSISTANT_ID) -> str:
+async def generate_text(prompt: str, thread_id: str, assistant_id: str) -> str:
     client = get_client()
     await client.beta.threads.messages.create(
         thread_id=thread_id,
@@ -65,11 +62,24 @@ async def generate_text(prompt: str, thread_id: str = THREAD_ID, assistant_id: s
 
     return message_content.value
 
+
+def contains_omikuji_phrase(text):
+    # 特定のフレーズを定義
+    # target_phrase = "おみくじをつくってやるからちょっと待つんじゃ。"
+    target_phrase = "<EOT>"
+    
+    # フレーズが含まれているかを判定
+    if target_phrase in text:
+        return 1  # フレーズが見つかった場合
+    return 0  # フレーズが見つからなかった場合
+
+
+
 async def chat_summary(thread_id):
     client = get_client()
     # スレッド内のメッセージを取得
-    thread_messages = await client.beta.threads.messages.list(thread_id)
-    
+    thread_messages = await client.beta.threads.messages.list(thread_id, limit = 100)
+
     thread_messages.data.reverse()
 
     # "role" が "user" のメッセージのみをフィルタリング
@@ -85,4 +95,50 @@ async def chat_summary(thread_id):
     # JSON形式で返却
     return {"texts": texts}
 
+async def get_shrineName_inthread(thread_id):
+    client = get_client()
 
+    # スレッド内の全てのメッセージを取得
+    response = await client.beta.threads.messages.list(thread_id, limit = 100)
+
+    # レスポンスの確認
+    if not response or not response.data:
+        return {"text": None}  # メッセージが取得できない場合
+
+    # メッセージを時系列順に並べ替え
+    thread_messages = response.data[::-1]
+
+    # 最初の "role" が "user" のメッセージを探す
+    for message in thread_messages:
+        if message.role == "user" and message.content:
+            if isinstance(message.content, list) and message.content and message.content[0].type == "text":
+                # "~神社" のような最初の会話内容を返す
+                return message.content[0].text.value
+
+    # 該当するメッセージが見つからない場合
+    return {"text": None}
+
+
+ # json形式に変換 -> 使わない
+def text_to_json(text):
+    lines = text.strip().split("\n")
+    json_data = {
+        "運勢": lines[0].strip(', '),
+        "願望": lines[1].split(', ')[1].strip(),
+        "健康": lines[2].split(', ')[1].strip(),
+        "金運": lines[3].split(', ')[1].strip(),
+        "学問": lines[4].split(', ')[1].strip(),
+        "恋愛": lines[5].split(', ')[1].strip(),
+        "神託": "".join(lines[6:]).strip()
+    }
+    return json_data
+ 
+
+def remove_eot(text: str) -> str:
+    return re.sub(r"<EOT>$","",text)
+
+# def remove_eot(text: str) -> str:
+#     # <EOT>が含まれていれば削除し、含まれていなければそのまま返す
+#     if "<EOT>" in text:
+#         return re.sub(r"<EOT>$", "", text)
+#     return text
