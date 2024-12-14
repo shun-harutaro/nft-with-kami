@@ -24,7 +24,7 @@
         <div class="icon-wrapper" v-if="message.sender !== 'me'">
           <div class="icon-background"></div>
           <img
-            src="@/assets/img/god-icon.png"
+            src="@/assets/img/god-icon.png" 
             alt="神様アイコン"
             class="icon-image"
           />
@@ -32,7 +32,7 @@
         <!-- ユーザー側のアイコン -->
         <div class="icon" v-if="message.sender === 'me'">
           <img
-            :src="profileImageUrl"
+            :src="profileImageUrl" 
             alt="ユーザーアイコン"
           />
         </div>
@@ -46,109 +46,117 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, nextTick, onMounted } from "vue";
+<script>
+import { computed, ref, nextTick } from "vue";
 import { useUserProfileStore } from "@/stores/userProfileStore";
 import axios from "axios";
-import { useRoute, useRouter } from "vue-router";
 
-// プロフィール情報
-const userProfileStore = useUserProfileStore();
-const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
+export default {
+  setup() {
+    const userProfileStore = useUserProfileStore();
+    const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
+    return {
+      profileImageUrl,
+    };
+  },
+  data() {
+    return {
+      messages: [], // チャットメッセージ
+      newMessage: "", // 入力中のメッセージ
+      threadId: "", // スレッドID
+    };
+  },
+  methods: {
+    // メッセージ送信
+    async sendMessage() {
+      if (this.newMessage.trim() === "") return; // 空メッセージは無視
 
-// チャットデータ
-const messages = ref([]); // メッセージリスト
-const newMessage = ref(""); // 入力中のメッセージ
-const threadId = ref(""); // スレッドID
+      const message = {
+        id: Date.now(),
+        sender: "me",
+        text: this.newMessage,
+      };
 
-const messageList = ref(null); // スクロール対象のリスト
+      // 入力メッセージを画面に即座に反映
+      this.messages.push(message);
+      this.scrollToEnd();
 
-const route = useRoute();
-const router = useRouter();
+      const userMessage = this.newMessage; // 送信前に値を保持
+      this.newMessage = ""; // 入力欄をクリア
 
-// メッセージ送信
-const sendMessage = async () => {
-  if (newMessage.value.trim() === "") return;
+      try {
+        console.log("Thread ID:", this.threadId);
 
-  const message = {
-    id: Date.now(),
-    sender: "me",
-    text: newMessage.value,
-  };
+        // サーバーにメッセージを送信
+        const response = await axios.post(`/api/gpt/talking?text=${userMessage}&thread_id=${this.threadId}`);
 
-  // 入力メッセージを画面に即座に反映
-  messages.value.push(message);
-  scrollToEnd();
+        const { text, thread_id, end_point } = response.data;
 
-  const userMessage = newMessage.value; // 送信前に値を保持
-  newMessage.value = ""; // 入力欄をクリア
+        // サーバーからの応答をチャットメッセージに追加
+        this.messages.push({
+          id: Date.now(),
+          sender: "system",
+          text: text,
+        });
 
-  try {
-    const response = await axios.post(
-      `/api/gpt/talking?text=${userMessage}&thread_id=${threadId.value}`
-    );
+        this.scrollToEnd(); // 応答追加後にスクロール
 
-    const { text, thread_id, end_point } = response.data;
+        // スレッドIDを更新
+        this.threadId = thread_id;
 
-    // サーバーからの応答をチャットメッセージに追加
-    messages.value.push({
+        // end_point が 1 の場合、/loading ページに遷移
+        if (end_point === 1) {
+          console.log("Waiting for 5 seconds before navigation...");
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          console.log("Navigating to /loading");
+          this.$router.push({
+            path: "/loading",
+            query: {
+              threadId: thread_id,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Failed to send message:", error);
+
+        // エラー時のメッセージを画面に表示
+        this.messages.push({
+          id: Date.now(),
+          sender: "system",
+          text: "メッセージの送信に失敗しました。",
+        });
+
+        this.scrollToEnd(); // エラーメッセージ追加後にスクロール
+      }
+    },
+    // メッセージリストの一番下にスクロール
+    scrollToEnd() {
+      nextTick(() => {
+        const messageList = this.$refs.messageList;
+        if (messageList) {
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+      });
+    },
+  },
+  mounted() {
+    const { threadId, text } = this.$route.query;
+
+    if (!threadId || !text) {
+      console.error("Missing threadId or text in query parameters.");
+      return;
+    }
+
+    this.messages.push({
       id: Date.now(),
       sender: "system",
       text: text,
     });
 
-    scrollToEnd();
-
-    // スレッドIDを更新
-    threadId.value = thread_id;
-
-    if (end_point === 1) {
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-      router.push({
-        path: "/loading",
-        query: { threadId: thread_id },
-      });
-    }
-  } catch (error) {
-    console.error("Failed to send message:", error);
-
-    messages.value.push({
-      id: Date.now(),
-      sender: "system",
-      text: "メッセージの送信に失敗しました。",
-    });
-
-    scrollToEnd();
-  }
+    this.threadId = threadId;
+    this.scrollToEnd(); // 初期メッセージ表示時にスクロール
+  },
 };
-
-// メッセージリストの一番下にスクロール
-const scrollToEnd = () => {
-  nextTick(() => {
-    if (messageList.value) {
-      messageList.value.scrollTop = messageList.value.scrollHeight;
-    }
-  });
-};
-
-// 初期化処理
-onMounted(() => {
-  const { threadId: initialThreadId, text } = route.query;
-
-  if (!initialThreadId || !text) {
-    console.error("Missing threadId or text in query parameters.");
-    return;
-  }
-
-  messages.value.push({
-    id: Date.now(),
-    sender: "system",
-    text: text,
-  });
-
-  threadId.value = initialThreadId;
-  scrollToEnd();
-});
 </script>
 
 <style scoped>
@@ -282,7 +290,20 @@ input {
   transition: background-color 0.3s ease;
 }
 
+.send-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 50%; /* 中央まで */
+  height: 2px; /* 線の太さ */
+  background-color: #ffffff;
+  transform: translateY(-50%);
+}
+
 .send-button:hover {
   background-color: #0056b3;
 }
+
+
 </style>

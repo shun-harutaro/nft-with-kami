@@ -67,13 +67,13 @@ const viewHistory = () => {
           class="oracle-button"
           @click="handleClick"
         >
-          神託を<br/>得る
+          おみくじ<br/>取得
         </button>
         <button
           class="view-history-button"
           @click="viewHistory"
         >
-          過去の神託を見る
+          過去の<br/>おみくじ
         </button>
       </div>
       <div v-else>
@@ -127,21 +127,28 @@ const viewHistory = () => {
 
 .oracle-button {
   position: absolute;
-  top: 50%; /* 縦の中央に配置 */
-  left: 50%;
+  top: 60%; /* 縦の中央に配置 */
+  left: 50%; /* 横の中央に配置 */
+  transform: translate(-50%, -50%) scale(2); /* 中心揃え + 大きさ2倍 */
   background-image: url('@/assets/img/hisigata.png');
   background-size: cover;
   background-position: center;
   background-color: transparent;
   color: #000000;
-  height: 12vh; /* ボタンの高さを画面の縦幅に合わせる */
-  width: 12vh; /* ボタンの幅を縦幅に合わせる */
+  height: 12vh; /* 元の高さ */
+  width: 12vh; /* 元の幅 */
   text-align: center;
   font-size: 20px;
   border: none;
   border-radius: 0;
   cursor: pointer;
   z-index: 20;
+  font: inherit;
+
+  /* 文字間隔調整 */
+  letter-spacing: -1px; /* 文字間を狭める */
+  /* 改行間隔の調整 */
+  line-height: 1.1; /* 行間を狭くする */
 }
 
 .view-history-button {
@@ -161,6 +168,8 @@ const viewHistory = () => {
   border: 2px solid rgba(255, 215, 0, 0.4);
   cursor: pointer;
   z-index: 10;
+  font: inherit;
+  line-height: 1.2; /* 行間を狭くする */
 }
 
 .view-history-button:hover,
