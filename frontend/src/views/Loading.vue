@@ -1,71 +1,99 @@
-<script>
+<script setup>
+import axios from "axios";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useUserProfileStore } from "@/stores/userProfileStore";
 
-import axios from 'axios';
+const router = useRouter();
+const route = useRoute();
 
-export default {
-  data() {
-    return {
-      threadId: "", // 初期化されたスレッドID
-    };
-  },
-  methods: {
-    async fetchSummaryAndOmikuji() {
-      try {
-        // 1. /gpt/chat-summary エンドポイントを呼び出し
-        console.log("Fetching chat summary with threadId:", this.threadId);
-        const summaryResponse = await axios.post(`/api/gpt/chat-summary?thread_id=${this.threadId}`);
-        const { text: summaryText, thread_id: updatedThreadId } = summaryResponse.data;
+const threadId = ref("");
+const userProfileStore = useUserProfileStore();
+const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
 
-        console.log("Chat summary fetched:", summaryText);
-
-        // 2. /gpt/omikuji エンドポイントを呼び出し
-        console.log("Fetching omikuji with summary text and updated threadId...");
-        const omikujiResponse = await axios.post(`/api/gpt/omikuji?text=${summaryText}&thread_id=${updatedThreadId}`);
-
-        const { text: omikujiText } = omikujiResponse.data;
-
-        console.log("Omikuji fetched:", omikujiText);
-
-        // 3. /Omikuji ページに遷移
-        console.log("Navigating to /Omikuji with omikuji text...");
-        this.$router.push({
-          path: "/Omikuji",
-          query: {
-            text: omikujiText,
-          },
-        });
-      } catch (error) {
-        console.error("Error during fetching or navigation:", error);
-        alert("エラーが発生しました。もう一度お試しください。");
-      }
-    },
-  },
-  mounted() {
-    // クエリパラメータから threadId を取得
-    const { threadId } = this.$route.query;
-
-    console.log(threadId)
-
-    if (!threadId) {
-      console.error("Missing threadId in query parameters.");
-      alert("スレッドIDが見つかりません。最初からやり直してください。");
-      return;
-    }
-
-    // スレッドIDを設定
-    this.threadId = threadId;
-
-    // フローを開始
-    this.fetchSummaryAndOmikuji();
-  },
+// チャットのサマリーを取得
+const fetchChatSummary = async () => {
+  const response = await axios.post(`/api/gpt/chat-summary?thread_id=${threadId.value}`);
+  return response.data;
 };
 
+// おみくじのテキストを取得
+const fetchOmikuji = async (summaryText, updatedThreadId) => {
+  const response = await axios.post(`/api/gpt/omikuji?text=${summaryText}&thread_id=${updatedThreadId}`);
+  return response.data.text;
+};
 
+// JSON形式のテキストと神社情報を取得
+const fetchJsonCreate = async (summaryText, updatedThreadId) => {
+  const response = await axios.post(`/api/gpt/json`, {
+    text: summaryText,
+    thread_id: updatedThreadId,
+  });
+  return {
+    omikujiText_json: `{${response.data.text}}`,
+    shrineName: response.data.shrineName,
+  };
+};
+
+// おみくじ画像を生成し、NFTメタデータを取得
+const fetchCreatePhoto = async (omikujiText_json, shrineName) => {
+  const imageResponse = await axios.post(
+    `/api/omikuzi?shrine_name=${encodeURIComponent(shrineName)}&icon_url=${encodeURIComponent(profileImageUrl.value)}`,
+    omikujiText_json,
+    { headers: { "Content-Type": "application/json" }, responseType: "blob" }
+  );
+
+  const formData = new FormData();
+  formData.append("upload_file", imageResponse.data, "omikuzi.png");
+
+  const metadataResponse = await axios.post(`/api/nft`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return {
+    photo: metadataResponse.data.image,
+    tokenId: metadataResponse.data.tokenId,
+    transactionHash: metadataResponse.data.transactionHash,
+  };
+};
+
+// おみくじページに遷移
+const navigateToOmikujiPage = (photo, tokenId, transactionHash) => {
+  router.push({
+    path: "/Omikuji",
+    query: { photo, tokenId, transactionHash },
+  });
+};
+
+// メインフロー
+const fetchSummaryAndOmikuji = async () => {
+  try {
+    const { summaryText, updatedThreadId } = await fetchChatSummary();
+    const { omikujiText_json, shrineName } = await fetchJsonCreate(summaryText, updatedThreadId);
+    const { photo, tokenId, transactionHash } = await fetchCreatePhoto(omikujiText_json, shrineName);
+    navigateToOmikujiPage(photo, tokenId, transactionHash);
+  } catch (error) {
+    console.error("Error during flow:", error);
+    alert("エラーが発生しました。もう一度お試しください。");
+  }
+};
+
+// 初期化処理
+onMounted(() => {
+  const queryThreadId = route.query.threadId;
+  if (!queryThreadId) {
+    alert("スレッドIDが見つかりません。最初からやり直してください。");
+    return;
+  }
+  threadId.value = queryThreadId;
+  fetchSummaryAndOmikuji();
+});
 </script>
 
 <template>
   <div class="omikuji-screen">
     <div class="content-wrapper">
+      <img id="icon">
       <img
         loading="lazy"
         src="@/assets/img/god-background.png"

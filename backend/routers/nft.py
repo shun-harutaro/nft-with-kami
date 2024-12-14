@@ -1,6 +1,8 @@
-from fastapi import APIRouter,UploadFile,Body
-import os
+from fastapi import APIRouter, UploadFile, Depends
+from typing import List, Dict
+from sqlmodel.ext.asyncio.session import AsyncSession
 from fastapi import APIRouter, HTTPException
+from database import get_db
 from schemas.nft_schema import NFTMetadata
 from services.nft_service import (
     upload_image_to_pinata,
@@ -13,33 +15,37 @@ from services.nft_service import (
 from utils.config import (
     get_nft_private_key
 )
+from models.nft import Nft
+import cruds.nft as nft_crud
+from services.line import get_user_id_from_cookie
+from utils.query import get_nfts_image_and_time_by_user_id
 
 NFT_PRIVATE_KEY = get_nft_private_key()
 
 router = APIRouter()
 
+
 @router.post(
     "/nft",
     tags=["NFT"],
-    summary="画像のアップロードとNFTの発行",
+    summary="画像のアップロードとNFTの発行"
 )
-async def mint(upload_file: UploadFile):
-    # Pinataに画像をアップロードしてURLを取得
+async def mint(upload_file: UploadFile,
+               user_id: str = Depends(get_user_id_from_cookie),
+               db: AsyncSession = Depends(get_db)
+               ):
     image_url = await upload_image_to_pinata(upload_file)
-    # メタデータの作成
-    nft_metadata = create_metadata(filename=upload_file.filename,image_url=image_url)
+    nft_metadata = create_metadata(
+        filename=upload_file.filename, image_url=image_url)
     metadata_url = upload_metadata_to_pinata(nft_metadata)
-    # NFTをブロックチェーンにミント
-    tx_receipt = mint_nft(metadata_url,NFT_PRIVATE_KEY)
-    # トランザクションハッシュを取得
+    tx_receipt = mint_nft(metadata_url, NFT_PRIVATE_KEY)
     tx_hash = tx_receipt.transactionHash.hex()
-    # イベントログからトークンIDを取得
     try:
-        token_id_hex = tx_receipt.logs[0]["topics"][3]  # トークンIDのHexBytes
-        token_id = int(token_id_hex.hex(), 16)  # 16進数を整数に変換
+        token_id_hex = tx_receipt.logs[0]["topics"][3]
+        token_id = int(token_id_hex.hex(), 16)
     except (KeyError, IndexError) as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve token ID: {str(e)}")
-
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve token ID: {str(e)}")
 
     response_data = {
         "name": nft_metadata.name,
@@ -50,8 +56,13 @@ async def mint(upload_file: UploadFile):
         "tokenId": token_id
     }
 
-    #メタデータと取引情報を返す
+    existing_nft = await nft_crud.get_nft(db, tx_hash)
+    if existing_nft:
+        raise HTTPException(status_code=400, detail="NFT already exists")
+    nft = Nft(id=tx_hash, user_id=user_id)
+    await nft_crud.create_nft(db, nft)
     return response_data
+
 
 @router.get(
     "/nft/metadata/{tx_hash}",
@@ -65,7 +76,8 @@ async def get_nft_metadata(tx_hash: str):
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+        raise HTTPException(
+            status_code=404, detail="User not found")
 
 
 @router.get(
@@ -75,7 +87,25 @@ async def get_nft_metadata(tx_hash: str):
 )
 async def balance():
     try:
-        balance = get_balance()  
-        return balance  
+        balance = get_balance()
+        return balance
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+        raise HTTPException(
+            status_code=404, detail="NFT account not found")
+
+
+@router.get(
+    "/nft/users",
+    tags=["NFT"],
+    summary="特定のユーザーのNFT画像URLと作成日時を取得",
+    response_model=List[Dict[str, str]]
+)
+async def get_nfts_by_user_endpoint(
+    user_id: str = Depends(get_user_id_from_cookie),
+    db: AsyncSession = Depends(get_db),
+):
+    nfts = await get_nfts_image_and_time_by_user_id(db, user_id)
+    if not nfts:
+        raise HTTPException(
+            status_code=404, detail="No NFTs found for the given user ID")
+    return nfts

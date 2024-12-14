@@ -1,15 +1,3 @@
-<script setup>
-import { useRouter } from "vue-router";
-
-const handleShare = () => {
-  /* TODO: 実装 */
-}
-
-const handleReturn = () => {
-  router.push("/")
-}
-</script>
-
 <template>
   <div class="result-screen">
     <div class="result-container">
@@ -19,12 +7,21 @@ const handleReturn = () => {
         class="background-image"
         alt=""
       />
-      <div class="fortune-display"></div>
+      <div class="fortune-display">
+        <img v-if="blobUrl" :src="blobUrl" alt="Generated Omikuji" />
+        <div class="container">
+          <div class="var-box">Token ID<br> <span id="var1"></span></div>
+          <div class="var-box">Blockchain<br>Polygon</div>
+          <div class="var-box">Token Standard<br>ERC-72 </div>
+          <div class="var-box">Contract Address<br>0xfB40b73E6cEe109Ae7614e621ffA841Dd1EB1584</div>
+          <div class="var-box">Transaction Hash<br> <span id="var2"></span></div>
+        </div>
+      </div>
       <div class="share-section">
-        <button 
-	        class="share-button" 
-	        tabindex="0"
-	        @click="handleShare"
+        <button
+          class="share-button"
+          tabindex="0"
+          @click="handleShare"
           aria-label="おみくじをシェア">
           <span>おみくじをシェア</span>
         </button>
@@ -51,6 +48,53 @@ const handleReturn = () => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
+
+const router = useRouter();
+const route = useRoute();
+
+const picture = "https://tyoudoii-illust.com/wp-content/uploads/2024/07/oksign_businessman_simple-300x282.png";
+
+const omikuziText = {
+  "運勢": "大吉",
+  "願望": "多くの思いを乗せ...",
+  "健康": "日々の生活tinnpoを整えれば...",
+  "金運": "自分のtinnpo強みを活かして...",
+  "学問": "劇的にtinpo伸時期timm中して...",
+  "恋愛": "信じ合うことtinnpotinnpo離に打ち勝て...",
+  "神託": "一輝よ、朝の目覚めtinnpoせずに新たな環境で暮らすと..."
+};
+
+const blobUrl = ref(null);
+
+onMounted(async () => {
+  try {
+    const {photo, tokenId, transactionHash} = route.query;
+    blobUrl.value=photo;
+    document.getElementById("var1").textContent = tokenId;
+    document.getElementById("var2").textContent = transactionHash;
+
+    console.log("NFT Token ID:", tokenId);
+  } catch (error) {
+    console.error("エラーが発生しました:", error);
+  }
+});
+
+const handleShare = () => {
+  // TODO: シェア機能実装
+};
+
+const handleReturn = () => {
+  router.push("/");
+};
+
+
+
+</script>
 
 <style scoped>
 .result-screen {
@@ -89,6 +133,16 @@ const handleReturn = () => {
   display: flex;
   min-height: 395px;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  align-items: center; /* 中央寄せしたい場合 */
+}
+
+.fortune-display img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .share-section {
@@ -156,5 +210,46 @@ const handleReturn = () => {
   font-size: 45px;
   text-align: center;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 300px;
+  margin-top: 20px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 18px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.var-box {
+  background: #fff; 
+  border: 2px solid #333; 
+  border-radius: 10px; 
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  text-align: center; /* 全て中央揃えで統一 */
+}
+
+.var-box span {
+  font-weight: bold;
+  color: #000;
+  display: block;
+  margin-top: 5px;
+}
+
+/* Token ID・他のボックスとの統一感を確保するため特別なスタイルは控える */
+/* もし全て同じならこのセレクタは不要 */
+
+/* Transaction Hash を少し読みやすくするための微調整のみ */
+
+
+
+
 
 </style>

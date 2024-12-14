@@ -1,24 +1,18 @@
 @import './base.css';
 
-#app {
-  font-weight: normal;
-}
-
-@media (min-width: 1024px) {
-  #app {
-    padding: 0 2rem;
-  }
-}
-
+/* 玉ねぎ楷書 */
 @font-face {
-  font-family: "TamanegiKaisho"; /* フォント名 */
-  src: url('./fonts/tamanegikaisho.ttf') format('truetype'); /* 相対パスでフォントを指定 */
-  font-weight: normal;
-  font-style: normal;
+  font-family: "TamanegiKaisho";
+  src: url('./fonts/tamanegikaisho.ttf') format('truetype');
+}
+
+/* AsebiMin */
+@font-face {
+  font-family: "AsebiMin";
+  src: url('./fonts/AsebiMin-Light.otf') format('opentype');
 }
 
 /* プロジェクト全体にフォントを適用 */
 body {
-  font-family: "TamanegiKaisho", sans-serif; /* カスタムフォントを適用 */
+  font-family: "TamanegiKaisho", "AsebiMin","Noto Serif JP";
 }
-

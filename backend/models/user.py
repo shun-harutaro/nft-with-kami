@@ -1,10 +1,12 @@
-from typing import Optional,List,TYPE_CHECKING
-from sqlmodel import Field, SQLModel,Relationship
+from typing import Optional, List, TYPE_CHECKING
+from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime
 from models.nft import Nft
 
 if TYPE_CHECKING:
     from models.nft import Nft
+
+
 class User(SQLModel, table=True):
     id: str = Field(
         ..., primary_key=True, index=True, max_length=33,

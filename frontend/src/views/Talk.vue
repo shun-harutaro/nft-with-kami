@@ -14,7 +14,7 @@
         alt=""
       />
     </div>
-    <div class="messages">
+    <div class="messages" ref="messageList">
       <div
         v-for="message in messages"
         :key="message.id"
@@ -24,7 +24,7 @@
         <div class="icon-wrapper" v-if="message.sender !== 'me'">
           <div class="icon-background"></div>
           <img
-            src="@/assets/img/god-icon.png" 
+            src="@/assets/img/god-icon.png"
             alt="神様アイコン"
             class="icon-image"
           />
@@ -32,7 +32,7 @@
         <!-- ユーザー側のアイコン -->
         <div class="icon" v-if="message.sender === 'me'">
           <img
-            :src="profileImageUrl" 
+            :src="profileImageUrl"
             alt="ユーザーアイコン"
           />
         </div>
@@ -46,110 +46,109 @@
   </div>
 </template>
 
-<script>
-import { computed } from "vue";
+<script setup>
+import { ref, computed, nextTick, onMounted } from "vue";
 import { useUserProfileStore } from "@/stores/userProfileStore";
 import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
 
-export default {
-  setup() {
-    const userProfileStore = useUserProfileStore();
-    const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
-    return {
-      profileImageUrl,
-    };
-  },
-  data() {
-    return {
-      messages: [], // チャットメッセージ
-      newMessage: "", // 入力中のメッセージ
-      threadId: "", // スレッドID
-    };
-  },
-  methods: {
-    // メッセージ送信
-    async sendMessage() {
-      if (this.newMessage.trim() === "") return; // 空メッセージは無視
+// プロフィール情報
+const userProfileStore = useUserProfileStore();
+const profileImageUrl = computed(() => userProfileStore.profileImageUrl);
 
-      const message = {
-        id: Date.now(),
-        sender: "me",
-        text: this.newMessage,
-      };
+// チャットデータ
+const messages = ref([]); // メッセージリスト
+const newMessage = ref(""); // 入力中のメッセージ
+const threadId = ref(""); // スレッドID
 
-      // 入力メッセージを画面に即座に反映
-      this.messages.push(message);
-      const userMessage = this.newMessage; // 送信前に値を保持
-      this.newMessage = ""; // 入力欄をクリア
+const messageList = ref(null); // スクロール対象のリスト
 
-      try {
-        console.log("Thread ID:", this.threadId);
+const route = useRoute();
+const router = useRouter();
 
-        // サーバーにメッセージを送信
-        const response = await axios.post(`/api/gpt/talking?text=${userMessage}&thread_id=${this.threadId}`);
+// メッセージ送信
+const sendMessage = async () => {
+  if (newMessage.value.trim() === "") return;
 
-        const { text, thread_id, end_point } = response.data;
+  const message = {
+    id: Date.now(),
+    sender: "me",
+    text: newMessage.value,
+  };
 
-        // サーバーからの応答をチャットメッセージに追加
-        this.messages.push({
-          id: Date.now(),
-          sender: "system",
-          text: text,
-        });
+  // 入力メッセージを画面に即座に反映
+  messages.value.push(message);
+  scrollToEnd();
 
-        // スレッドIDを更新
-        this.threadId = thread_id;
-        console.log(end_point)
-        // end_point が 1 の場合、/loading ページに遷移
-        if (end_point === 1) {
-          // 5秒待機処理
-          console.log("Waiting for 5 seconds before navigation...");
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-          
-          console.log("Navigating to /loading");
-          // 遷移処理
-          this.$router.push({
-            path: "/loading",
-            query: {
-              threadId: thread_id,
-            },
-          });
-        }
+  const userMessage = newMessage.value; // 送信前に値を保持
+  newMessage.value = ""; // 入力欄をクリア
 
-      } catch (error) {
-        console.error("Failed to send message:", error);
+  try {
+    const response = await axios.post(
+      `/api/gpt/talking?text=${userMessage}&thread_id=${threadId.value}`
+    );
 
-        // エラー時のメッセージを画面に表示
-        this.messages.push({
-          id: Date.now(),
-          sender: "system",
-          text: "メッセージの送信に失敗しました。",
-        });
-      }
-    },
-  },
-  mounted() {
-    // クエリパラメータから `text` と `threadId` を取得
-    const { threadId, text } = this.$route.query;
+    const { text, thread_id, end_point } = response.data;
 
-    if (!threadId || !text) {
-      console.error("Missing threadId or text in query parameters.");
-      return;
-    }
-
-    // 初期メッセージを追加
-    this.messages.push({
+    // サーバーからの応答をチャットメッセージに追加
+    messages.value.push({
       id: Date.now(),
       sender: "system",
       text: text,
     });
 
-    // スレッドIDを設定
-    this.threadId = threadId;
-  },
+    scrollToEnd();
+
+    // スレッドIDを更新
+    threadId.value = thread_id;
+
+    if (end_point === 1) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      router.push({
+        path: "/loading",
+        query: { threadId: thread_id },
+      });
+    }
+  } catch (error) {
+    console.error("Failed to send message:", error);
+
+    messages.value.push({
+      id: Date.now(),
+      sender: "system",
+      text: "メッセージの送信に失敗しました。",
+    });
+
+    scrollToEnd();
+  }
 };
 
+// メッセージリストの一番下にスクロール
+const scrollToEnd = () => {
+  nextTick(() => {
+    if (messageList.value) {
+      messageList.value.scrollTop = messageList.value.scrollHeight;
+    }
+  });
+};
 
+// 初期化処理
+onMounted(() => {
+  const { threadId: initialThreadId, text } = route.query;
+
+  if (!initialThreadId || !text) {
+    console.error("Missing threadId or text in query parameters.");
+    return;
+  }
+
+  messages.value.push({
+    id: Date.now(),
+    sender: "system",
+    text: text,
+  });
+
+  threadId.value = initialThreadId;
+  scrollToEnd();
+});
 </script>
 
 <style scoped>
@@ -240,29 +239,18 @@ export default {
 
 /* 吹き出し */
 .bubble {
-  position: relative; /* z-index を有効にするために必要 */
-  z-index: 10; /* 背景や他の要素よりも前面に表示 */
+  position: relative;
+  z-index: 10;
   max-width: 70%;
   padding: 10px;
   border-radius: 15px;
   background-color: #dcf8c6;
   word-wrap: break-word;
-  transform: translateZ(0); /* Safariでの再描画を強制 */
-  color: #000000; /* フォントの色 */
+  color: #000000;
 }
 .message.received .bubble {
   background-color: #fff;
   border: 1px solid #ddd;
-  z-index: 11; /* 吹き出しを前面に */
-  transform: translateZ(0); /* Safariでの再描画を強制 */
-}
-
-/* 吹き出し内のテキストをさらに前面に */
-.bubble::before,
-.bubble::after {
-  position: relative;
-  z-index: 12; /* 吹き出し内の文字をさらに前面に */
-  transform: translateZ(0); /* Safariでの再描画を強制 */
 }
 
 /* 入力エリア */
@@ -292,17 +280,6 @@ input {
   clip-path: polygon(100% 50%, 0 0, 0 100%);
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.send-button::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 60%; /* 線を左から40%の位置で止める */
-  height: 2px;
-  background-color: #fff;
-  transform: translateY(-50%);
 }
 
 .send-button:hover {
