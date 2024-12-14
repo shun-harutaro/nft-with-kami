@@ -23,8 +23,6 @@ app.include_router(nft_database.router)
 
 origins = [
     "https://nft-with-kami.web.app"
-    "http://localhost:8000",
-    "http://localhost:3000",
 ]
 
 app.add_middleware(
