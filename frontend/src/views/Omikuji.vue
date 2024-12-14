@@ -9,6 +9,7 @@
       />
       <div class="fortune-display">
         <img v-if="blobUrl" :src="blobUrl" alt="Generated Omikuji" />
+        <div>NFT Details</div>
         <div class="container unified-box">
           <div>
             <strong>Token ID:</strong> <span id="var1"></span>
@@ -35,12 +36,12 @@
           aria-label="おみくじをシェア">
           <span>おみくじをシェア</span>
         </button>
-        <img
+        <!-- <img
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/1b3025bf1577dd0e3f2ae1f42ff1ae5f416bca32090785e1241417b7bc11443d?placeholderIfAbsent=true&apiKey=d15c8345fe15403fbf2733b286d943d4"
           class="share-icon"
           alt="Share fortune result"
-        />
+        /> -->
       </div>
       <button
          class="return-button"
@@ -84,7 +85,7 @@ const blobUrl = ref(null);
 onMounted(async () => {
   try {
     const {photo, tokenId, transactionHash} = route.query;
-    blobUrl.value="tesst";
+    blobUrl.value=photo;
     document.getElementById("var1").textContent = tokenId;
     document.getElementById("var2").textContent = transactionHash;
 
@@ -162,7 +163,8 @@ const handleReturn = () => {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  align-items: center; /* 中央寄せしたい場合 */
+  align-items: center; /* 中央寄せ */
+  margin-bottom: 20px; /* fortune-displayの下に間隔を追加 */
 }
 
 .fortune-display img {
@@ -185,6 +187,7 @@ const handleReturn = () => {
   gap: 11px;
   font-size: 40px;
   align-items: center; /* 子要素の縦方向を中央揃え */
+  margin-top: 20px; /* 追加: share-sectionの上に間隔を追加 */
   right: -15px;
   top: -10px;
 }
@@ -205,16 +208,16 @@ const handleReturn = () => {
   justify-content: center; /* ボタン内テキストを横方向中央揃え */
 }
 
-.share-icon {
-  position: relative;  /* アイコンを相対位置で配置 */
+/* .share-icon {
+  position: relative; 
   aspect-ratio: 1;
   object-fit: contain;
   object-position: center;
   width: 70px;
   height: auto;
-  left: -40px;  /* アイコンを左に10px移動 */
-  top: -5px;  /* アイコンを上に10px移動 */
-}
+  left: -40px;  
+  top: -5px;  
+} */
 
 
 
