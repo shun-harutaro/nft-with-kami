@@ -1,76 +1,82 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+<script>
 import axios from 'axios';
+import { useRouter } from 'vue-router'
 
-// Reactive state
-const messages = ref([]);
-const threadId = ref('');
-const text = ref('');
-
-// Router & Route instances
 const router = useRouter();
-const route = useRoute();
 
-// メッセージを取得
-const fetchMessages = async () => {
-  const shrineName = route.query.shrine;
-  if (!shrineName) {
-    console.error("Shrine name is missing in the query.");
-    return;
-  }
+export default {
+  data() {
+    return {
+      messages: [], // チャットメッセージ
+      threadId: "", // スレッドID
+      text: "", // GPTが生成した文章
+    };
+  },
+  methods: {
+    // shrine情報に基づくメッセージを取得
+    async fetchMessages() {
+      const shrineName = this.$route.query.shrine; // 正しい $route オブジェクトを使用
+      if (!shrineName) {
+        console.error("Shrine name is missing in the query.");
+        return;
+      }
 
-  try {
-    console.log(shrineName);
-    const response = await axios.post(`/api/gpt/shrine-info?shrine=${shrineName}`, {
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    });
+      try {
+        // shrine情報をAPIに送信してレスポンスを取得
+        console.log(shrineName)
+        const response = await axios.post(`/api/gpt/shrine-info?shrine=${shrineName}`, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        });
 
-    const { text: responseText, thread_id } = response.data;
+        // APIのレスポンスからtextとthread_idを取得
+        const { text, thread_id } = response.data;
 
-    // メッセージとスレッドIDを設定
-    messages.value.push({
-      id: Date.now(),
-      sender: "system",
-      text: responseText,
-    });
-    threadId.value = thread_id;
-    text.value = responseText;
+        // メッセージとスレッドIDを設定
+        this.messages.push({
+          id: Date.now(),
+          sender: "system",
+          text: text,
+        });
+        this.threadId = thread_id;
+        this.text = text;
 
-    // 次のページに遷移
-    navigateToTalk();
-  } catch (error) {
-    console.error("Failed to fetch messages:", error);
-  }
-};
-
-// Talkページに遷移
-const navigateToTalk = () => {
-  if (!threadId.value || !text.value) {
-    console.error("Cannot navigate to talk page without threadId or text.");
-    return;
-  }
-
-  router.push({
-    path: '/talk',
-    query: {
-      threadId: threadId.value,
-      text: text.value,
+        // メッセージが取得できたら次のページに遷移
+        this.navigateToTalk();
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      }
     },
-  });
+
+    // Talkページに遷移
+    navigateToTalk() {
+      if (!this.threadId || !this.text) {
+        console.error("Cannot navigate to talk page without threadId or text.");
+        return;
+      }
+      this.$router.push({
+        path: '/talk',
+        query: {
+          threadId: this.threadId,
+          text: this.text, // textも次のページに渡す
+        },
+      });
+    },
+  },
+  mounted() {
+    this.fetchMessages(); // コンポーネントのマウント時にメッセージを取得
+  },
 };
 
-// コンポーネントのマウント時にメッセージを取得
-onMounted(() => {
-  fetchMessages();
+const fetchShrine = () => {
+  /* TODO 実装 */
+};
 
-  // 5秒後にTalkページへ遷移
-  setTimeout(() => {
-    router.push('/talk');
-  }, 5000);
-});
+// ページ表示後に5秒後の遷移を設定
+setTimeout(() => {
+  router.push('/talk'); // Talk.vue へのルートパスに遷移
+}, 5000);
 </script>
 
 <template>
@@ -121,6 +127,7 @@ onMounted(() => {
   animation: fadeIn 2s ease-in forwards;
 }
 
+/* アニメーション定義 */
 @keyframes fadeIn {
   from {
     opacity: 0;
