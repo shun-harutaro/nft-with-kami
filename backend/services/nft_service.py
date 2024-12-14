@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 import requests
 import json
 import os
+from datetime import datetime
 from web3 import Web3
 from schemas.nft_schema import NFTMetadata
 from utils.config import (
@@ -144,12 +145,16 @@ def get_balance():
 
 def create_metadata(filename: str, image_url: str):
     meta_data = nft_metadata = NFTMetadata(
-        name=filename,
-        description="2024年 NFT with 神により、生成されたおみくじです。",
-        image=image_url,
-        attributes=[
-            {"trait_type": "Year", "value": "2024"},
-            {"trait_type": "Grade", "value": "Super"},
-        ],
-    )
+                    name=filename,
+                    description="2024年 NFT with 神により、生成されたおみくじです。",
+                    image=image_url,
+                    attributes=[
+                        {"trait_type": "Year", "value": "2024"},
+                        {"trait_type": "Grade", "value": "Super"},
+                    ],
+                )
     return meta_data
+
+def generate_name_with_user(user_id: str) -> str:
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"NFT_{user_id}_{current_time}"

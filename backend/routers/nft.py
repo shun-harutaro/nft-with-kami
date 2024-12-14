@@ -10,8 +10,10 @@ from services.nft_service import (
     upload_metadata_to_pinata,
     mint_nft,
     get_metadata_from_transaction,
-    create_metadata
+    create_metadata,
+    generate_name_with_user
 )
+from services.line import get_user_id_from_cookie
 from utils.config import (
     get_nft_private_key
 )
@@ -30,6 +32,7 @@ router = APIRouter()
     tags=["NFT"],
     summary="画像のアップロードとNFTの発行"
 )
+
 async def mint(upload_file: UploadFile,
                user_id: str = Depends(get_user_id_from_cookie),
                db: AsyncSession = Depends(get_db)
@@ -46,7 +49,6 @@ async def mint(upload_file: UploadFile,
     except (KeyError, IndexError) as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to retrieve token ID: {str(e)}")
-
     response_data = {
         "name": nft_metadata.name,
         "description": nft_metadata.description,
