@@ -17,7 +17,7 @@ services:
     container_name: backend
     environment:
       - IS_DEV_MODE=1
-      - LINE_REDIRECT_URI=https://localhost/api/auth/callback
+      - LINE_REDIRECT_URI=https://localhost/callback
       - FRONTEND_BASE_URI=https://localhost
     env_file:
       - .env

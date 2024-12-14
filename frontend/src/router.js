@@ -8,15 +8,17 @@ import Omikuji from "./views/Omikuji.vue"
 import Loading from "./views/Loading.vue"
 import Talk from "./views/Talk.vue"
 import Ichiran from "./views/Ichiran.vue"
+import Callback from "./views/Callback.vue"
 
 const routes = [
   { path: "/", name: "Login", component: Login },
   { path: "/location", component: Location },
   { path: "/godcome", component: Godcome },
-  { path: "/omikuji", component: Omikuji},
-  { path: "/loading", component: Loading},
-  { path: "/talk", component: Talk},
-  { path: "/ichiran", component: Ichiran},
+  { path: "/omikuji", component: Omikuji },
+  { path: "/loading", component: Loading },
+  { path: "/talk", component: Talk },
+  { path: "/ichiran", component: Ichiran },
+  { path: "/callback", name: "Callback", component: Callback },
 ]
 
 const router = createRouter({
@@ -33,8 +35,10 @@ router.beforeEach(async (to, from, next) => {
     await store.fetchUserProfile();
   }
 
-  // 認証が必要なルートの保護
-  if (to.name !== "Login" && !store.isLoggedIn) {
+  // /callback ページはログインしなくてもアクセス可能
+  if (to.name === "Callback") {
+    next(); // /callback ページへの遷移は許可
+  } else if (to.name !== "Login" && !store.isLoggedIn) {
     next({ name: "Login" }); // ログインしていない場合はホームにリダイレクト
   } else {
     next(); // 通常通りルートへ遷移
