@@ -103,7 +103,7 @@ export default {
 
         // スレッドIDを更新
         this.threadId = thread_id;
-
+        console.log(end_point);
         // end_point が 1 の場合、/loading ページに遷移
         if (end_point === 1) {
           console.log("Waiting for 5 seconds before navigation...");
