@@ -12,7 +12,7 @@
 
 ## Overview
 LINE ヤフー社主催、Hack U KOSEN 2024 最優秀賞 ＆ HappyHacking賞 ダブル受賞！！
-- [プレゼン資料](https://www.canva.com/design/DAGY-nI_Kto/LWnHLOX9T7vyRYSK_wr8gw/view?utm_content=DAGY-nI_Kto&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf5d9995b2b) (created by [KAWAHARA Ryosuke](https://github.com/iamkawaryo))
+- [<img src="frontend/public/web-app-manifest-512x512.png">](https://www.canva.com/design/DAGY-nI_Kto/LWnHLOX9T7vyRYSK_wr8gw/view) (created by [KAWAHARA Ryosuke](https://github.com/iamkawaryo))
 - [プレゼン動画(準備中)]() (presented by [OKADA Itsuki](https://github.com/okd10))
 
 ## 貢献者ガイド(CONTRIBUTING.md)
