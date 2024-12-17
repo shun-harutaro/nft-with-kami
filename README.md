@@ -1,7 +1,7 @@
 # nft-nenga
 
 ## 目次
-- [スライド](#スライド)
+- [Overview](#overview)
 - [貢献者ガイド(CONTRIBUTING.md)](#貢献者ガイドcontributingmd)
 - [動作環境（確認済み）](#動作環境確認済み)
 - [動作確認](#動作確認)
@@ -10,17 +10,10 @@
 - [ライセンス](#ライセンス)
 - [Authors](#authors)
 
-## スライド
-
-<div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
- padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https://www.canva.com/design/DAGY-nI_Kto/LWnHLOX9T7vyRYSK_wr8gw/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>
-<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGY-nI_Kto&#x2F;LWnHLOX9T7vyRYSK_wr8gw&#x2F;view?utm_content=DAGY-nI_Kto&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">hacku本番用発表スライド_6_やそしまぐみ</a> by 川原遼介
-
+## Overview
+LINE ヤフー社主催、Hack U KOSEN 2024 最優秀賞 ＆ HappyHacking賞 ダブル受賞！！
+- [プレゼン資料](https://www.canva.com/design/DAGY-nI_Kto/LWnHLOX9T7vyRYSK_wr8gw/view?utm_content=DAGY-nI_Kto&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf5d9995b2b) (created by [KAWAHARA Ryosuke](https://github.com/iamkawaryo))
+- [プレゼン動画(準備中)]() (presented by [OKADA Itsuki](https://github.com/okd10))
 
 ## 貢献者ガイド(CONTRIBUTING.md)
 本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/shun-harutaro/nft-nenga/blob/main/CONTRIBUTING.md)を**必ず確認ください**
