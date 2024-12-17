@@ -1,12 +1,19 @@
 # nft-nenga
 
 ## 目次
+- [Overview](#overview)
 - [貢献者ガイド(CONTRIBUTING.md)](#貢献者ガイドcontributingmd)
 - [動作環境（確認済み）](#動作環境確認済み)
 - [動作確認](#動作確認)
 - [APIエンドポイント](#apiエンドポイント)
 - [ディレクトリ構成](#ディレクトリ構成)
 - [ライセンス](#ライセンス)
+- [Authors](#authors)
+
+## Overview
+LINE ヤフー社主催、Hack U KOSEN 2024 最優秀賞 ＆ HappyHacking賞 ダブル受賞！！
+- [<img src="frontend/public/web-app-manifest-512x512.png">](https://www.canva.com/design/DAGY-nI_Kto/LWnHLOX9T7vyRYSK_wr8gw/view) (created by [KAWAHARA Ryosuke](https://github.com/iamkawaryo))
+- [プレゼン動画(準備中)]() (presented by [OKADA Itsuki](https://github.com/okd10))
 
 ## 貢献者ガイド(CONTRIBUTING.md)
 本リポジトリにコミットする場合、[CONTRIBUTING.md](https://github.com/shun-harutaro/nft-nenga/blob/main/CONTRIBUTING.md)を**必ず確認ください**
@@ -149,3 +156,12 @@ docker compose down
 
 ## ライセンス
 本リポジトリはMITライセンスです。
+
+## Authors  
+We are やそしまぐみ！！
+- [OKADA Itsuki](https://github.com/okd10)
+- [KAWAHARA Ryosuke](https://github.com/iamkawaryo)
+- [KITAMURA Kotarro](https://github.com/okota7412)
+- [SAKAI Yusei](https://github.com/usay1001010)
+- [TAKAGI Toru](https://github.com/imtkgtr)
+- [NOZAKI Shuntaro](https://github.com/shun-harutaro)
