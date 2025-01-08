@@ -62,7 +62,6 @@ const viewHistory = () => {
         alt="しめ縄"
       />
 
-      <div v-if="isLoggedIn">
         <button
           class="oracle-button"
           @click="handleClick"
@@ -75,12 +74,6 @@ const viewHistory = () => {
         >
           過去の<br/>おみくじ
         </button>
-      </div>
-      <div v-else>
-        <LoginButton
-          class="login-button"
-        />
-      </div>
     </div>
   </div>
 </template>
